@@ -2,28 +2,25 @@ package com.example.codingexercise.controller;
 
 import com.example.codingexercise.model.ProductPackage;
 import com.example.codingexercise.repository.PackageRepository;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import com.example.codingexercise.service.impl.PackageService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequestMapping("/packages")
 public class PackageController {
 
-    private final PackageRepository packageRepository;
+    @Autowired
+    private PackageService packageService;
 
-    public PackageController(PackageRepository packageRepository) {
-        this.packageRepository = packageRepository;
-    }
-
-    @RequestMapping(method = RequestMethod.POST, value = "/packages")
+    @PostMapping
     public ProductPackage create(@RequestBody ProductPackage newProductPackage) {
-        return packageRepository.create(newProductPackage.getName(), newProductPackage.getDescription(), newProductPackage.getProductIds());
+        return null;
+        //return packageRepository.create(newProductPackage.getName(), newProductPackage.getDescription(), newProductPackage.getProductIds());
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/packages/{id}")
+    @GetMapping(value = "/{id}")
     public ProductPackage get(@PathVariable String id) {
-        return packageRepository.get(id);
+        return packageService.getProductPackage(id);
     }
 }

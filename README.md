@@ -1,0 +1,1 @@
+http://localhost:8080/codingexercise/swagger-ui/index.html
