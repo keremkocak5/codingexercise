@@ -10,27 +10,19 @@ import org.springframework.web.client.RestTemplate;
 import java.time.Duration;
 
 @Configuration
-public class GatewayConfig {
+public class FrankfurterGatewayConfig {
 
-    @Value("${rest.product.timeout.connect}")
+    @Value("${rest.frankfurter.timeout.connect}")
     private long connectTimeout;
 
-    @Value("${rest.product.timeout.read}")
+    @Value("${rest.frankfurter.timeout.read}")
     private long readTimeout;
 
-    @Value("${rest.product.username}")
-    private String username;
-
-    @Value("${rest.product.password}")
-    private String password;
-
     @Bean
-    public RestTemplate restTemplate(RestTemplateBuilder restTemplateBuilder) {
-        RestTemplate restTemplate = restTemplateBuilder.
+    public RestTemplate frankfurterRestTemplate(RestTemplateBuilder restTemplateBuilder) {
+        return restTemplateBuilder.
                 setConnectTimeout(Duration.ofMillis(connectTimeout)).
                 setReadTimeout(Duration.ofMillis(readTimeout)).
                 build();
-        restTemplate.getInterceptors().add(new BasicAuthenticationInterceptor(username, password));
-        return restTemplate;
     }
 }

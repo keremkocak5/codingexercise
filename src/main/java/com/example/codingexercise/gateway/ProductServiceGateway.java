@@ -15,21 +15,20 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 import java.util.Optional;
-import org.springframework.core.ParameterizedTypeReference;
 
 @Component
 @RequiredArgsConstructor
 @Slf4j
 public class ProductServiceGateway {
 
-    private final RestTemplate restTemplate;
+    private final RestTemplate productRestTemplate;
 
     @Value("${rest.product.url}")
     private String productServiceUrl;
 
     public Optional<Product> getProduct(String id) {
         try {
-            return Optional.of(restTemplate.getForObject(productServiceUrl + "/api/v1/products/{id}", Product.class, id));
+            return Optional.of(productRestTemplate.getForObject(productServiceUrl + "/api/v1/products/{id}", Product.class, id));
         } catch (HttpClientErrorException e) {
             if (HttpStatus.NOT_FOUND.equals(e.getStatusCode())) {
                 return Optional.empty();
@@ -42,10 +41,9 @@ public class ProductServiceGateway {
 
     public List<Product> getProducts() {
         try {
-            String response = restTemplate.getForObject(productServiceUrl + "/api/v1/products",  String.class);
+            String response = productRestTemplate.getForObject(productServiceUrl + "/api/v1/products", String.class);
             ObjectMapper objectMapper = new ObjectMapper();
-            return objectMapper.readValue(response, new TypeReference<List<Product>>() {
-            });
+            return objectMapper.readValue(response, new TypeReference<List<Product>>() {});
         } catch (HttpClientErrorException e) {
             log.error("ProductServiceGateway.getProducts failed.", e);
             throw e;
