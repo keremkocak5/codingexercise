@@ -1,7 +1,9 @@
 package com.example.codingexercise.gateway.dto;
 
-import java.math.BigDecimal;
-import java.util.List;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-public record Rate(List<BigDecimal> rates) {
+import java.math.BigDecimal;
+import java.util.Map;
+
+public record Rate(@JsonProperty("rates") Map<String, BigDecimal> rates) {
 }

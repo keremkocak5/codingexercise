@@ -4,7 +4,8 @@ public class Constant {
 
     public static final String USD = "USD";
 
-    private Constant() {}
+    private Constant() {
+    }
 
     /*
     kerem
@@ -16,5 +17,7 @@ public class Constant {
     clientlere interface yaz
     product id yoksa map cakilsin
     update api eklenecek
+    currencyler enum mu olsun
+    base usd frankfurter contant olsun mu
      */
 }

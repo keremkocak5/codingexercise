@@ -9,8 +9,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
-import java.math.BigDecimal;
-
 @Component
 @RequiredArgsConstructor
 @Slf4j
@@ -21,15 +19,11 @@ public class FrankfurterServiceGateway {
     @Value("${rest.frankfurter.url}")
     private String frankfurterServiceUrl;
 
-    public BigDecimal getCurrencyBaseUsd(CurrencyCodeEnum currencyCodeEnum) {
+    public Rate getCurrencyBaseUsd(CurrencyCodeEnum currencyCode) {
         try {
-            return frankfurterRestTemplate.getForObject(frankfurterServiceUrl + "/v1/latest?base=USD&symbols={currencyCodeEnum}", Rate.class, currencyCodeEnum)
-                    .rates()
-                    .stream()
-                    .findFirst()
-                    .orElseThrow(()-> new RuntimeException("kerem"));
+            return frankfurterRestTemplate.getForObject(frankfurterServiceUrl + "/v1/latest?base=USD&symbols={currencyCode}", Rate.class, currencyCode.name());
         } catch (HttpClientErrorException e) {
-            log.error("FrankfurterServiceGateway.getCurrencyBaseUsd failed for currencyCodeEnum {}.", currencyCodeEnum);
+            log.error("FrankfurterServiceGateway.getCurrencyBaseUsd failed for currencyCodeEnum {}.", currencyCode);
             log.error("FrankfurterServiceGateway.getCurrencyBaseUsd failed.", e);
             throw e;
         }
