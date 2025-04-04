@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.List;
 import java.util.Optional;
 
 @Component
@@ -28,8 +29,17 @@ public class ProductServiceGateway {
             if (HttpStatus.NOT_FOUND.equals(e.getStatusCode())) {
                 return Optional.empty();
             }
-            log.warn("ProductServiceGateway.getProduct failed for id {}.", id);
-            log.warn("ProductServiceGateway.getProduct failed.", e);
+            log.error("ProductServiceGateway.getProduct failed for id {}.", id);
+            log.error("ProductServiceGateway.getProduct failed.", e);
+            throw e;
+        }
+    }
+
+    public List<Product> getProducts() {
+        try {
+            return restTemplate.getForObject(productServiceUrl + "/api/v1/products/{id}", List.class);
+        } catch (HttpClientErrorException e) {
+            log.error("ProductServiceGateway.getProducts failed.", e);
             throw e;
         }
     }
