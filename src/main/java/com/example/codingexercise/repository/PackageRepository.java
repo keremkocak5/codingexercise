@@ -11,7 +11,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Repository
 public class PackageRepository {
 
-    private volatile Map<String, Package> database = new ConcurrentHashMap<>();
+    private final Map<String, Package> database = new ConcurrentHashMap<>();
 
     public Package saveOrUpdate(Package productPackage) {
         database.put(productPackage.getId(), productPackage);

@@ -1,11 +1,9 @@
 package com.example.codingexercise.enums;
 
 import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 
 @Getter
-@Slf4j
 public enum ErrorCode {
 
     PRODUCT_NOT_FOUND("I0001", "Product not found", HttpStatus.NOT_FOUND),

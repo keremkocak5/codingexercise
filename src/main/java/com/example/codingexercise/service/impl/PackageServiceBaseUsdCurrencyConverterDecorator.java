@@ -38,7 +38,7 @@ public class PackageServiceBaseUsdCurrencyConverterDecorator extends PackageServ
         try {
             return recalculatePriceAndTotalPrice(rate, packageResponse);
         } catch (Exception e) {
-            log.error("Unexpected error at createPackage ", e);
+            log.error("Unexpected error at createPackage ", e); // kerem test et burayi
             packageService.deletePackage(packageResponse.id());
             throw new CodingExerciseRuntimeException(ErrorCode.INTERNAL_SERVER_ERROR);
         }

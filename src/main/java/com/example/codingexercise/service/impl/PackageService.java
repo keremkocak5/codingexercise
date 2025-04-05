@@ -31,19 +31,19 @@ public class PackageService implements IPackageConvertibleRateService, IPackageS
 
     @Override
     public PackageResponse createPackage(@NonNull PackageRequest packageRequest, @NonNull CurrencyCode currencyCode) {
-        Package newProductPackage = getProductsAndSavePackage(packageRequest, currencyCode);
-        return new PackageResponse(newProductPackage.getId(),
-                newProductPackage.getName(),
-                newProductPackage.getDescription(),
-                newProductPackage.getProducts(),
-                newProductPackage.getTotalPrice(),
-                newProductPackage.getCurrencyCode());
+        Package newPackage = getProductsAndSavePackage(packageRequest, currencyCode);
+        return new PackageResponse(newPackage.getId(),
+                newPackage.getName(),
+                newPackage.getDescription(),
+                newPackage.getProducts(),
+                newPackage.getTotalPrice(),
+                newPackage.getCurrencyCode());
     }
 
     @Override
-    public PackageResponse getPackage(String id, @NonNull CurrencyCode currencyCode) {
-        Package productPackage = getProductPackageOrThrow(id);
-        return getPackageResponse(currencyCode, productPackage);
+    public PackageResponse getPackage(@NonNull String id, @NonNull CurrencyCode currencyCode) {
+        Package aPackage = getPackageOrThrowIfNotFound(id);
+        return createPackageResponse(currencyCode, aPackage);
     }
 
     @Override
@@ -51,28 +51,28 @@ public class PackageService implements IPackageConvertibleRateService, IPackageS
         List<Package> productPackages = packageRepository.findAll();
         return productPackages
                 .stream()
-                .map(pack -> getPackageResponse(currencyCode, pack))
+                .map(aPackage -> createPackageResponse(currencyCode, aPackage))
                 .collect(Collectors.toUnmodifiableList());
     }
 
     @Override
-    public PackageResponse updatePackage(String id, PackageRequest packageRequest, CurrencyCode currencyCode) {
-        Package newProductPackage = getProductsAndUpdatePackage(id, packageRequest, currencyCode);
-        return new PackageResponse(newProductPackage.getId(),
-                newProductPackage.getName(),
-                newProductPackage.getDescription(),
-                newProductPackage.getProducts(),
-                newProductPackage.getTotalPrice(),
-                newProductPackage.getCurrencyCode());
+    public PackageResponse updatePackage(@NonNull String id, @NonNull PackageRequest packageRequest, @NonNull CurrencyCode currencyCode) {
+        Package updatedPackage = getProductsAndUpdatePackage(id, packageRequest, currencyCode);
+        return new PackageResponse(updatedPackage.getId(),
+                updatedPackage.getName(),
+                updatedPackage.getDescription(),
+                updatedPackage.getProducts(),
+                updatedPackage.getTotalPrice(),
+                updatedPackage.getCurrencyCode());
     }
 
     @Override
-    public boolean deletePackage(String id) {
+    public boolean deletePackage(@NonNull String id) {
         return packageRepository.deleteById(id);
     }
 
     private Package getProductsAndSavePackage(PackageRequest packageRequest, CurrencyCode currencyCode) {
-        List<Product> products = productService.getProductsFromApiAndValidate(packageRequest.productIds(), currencyCode);
+        List<Product> products = productService.getProductDetailsFromApiAndValidate(packageRequest.productIds(), currencyCode);
         BigDecimal totalPrice = getTotalPrice(products);
         Package newPackage = new Package(UUID.randomUUID().toString(), packageRequest.name(), packageRequest.description(), products, totalPrice, currencyCode.name());
         return packageRepository.saveOrUpdate(newPackage);
@@ -80,14 +80,14 @@ public class PackageService implements IPackageConvertibleRateService, IPackageS
 
     private Package getProductsAndUpdatePackage(String id, PackageRequest packageRequest, CurrencyCode currencyCode) {
         List<String> mergedProductIds = mergeExistingAndNewProductIds(id, packageRequest);
-        List<Product> products = productService.getProductsFromApiAndValidate(mergedProductIds, currencyCode);
+        List<Product> products = productService.getProductDetailsFromApiAndValidate(mergedProductIds, currencyCode);
         BigDecimal totalPrice = getTotalPrice(products);
         Package existingPackage = new Package(id, packageRequest.name(), packageRequest.description(), products, totalPrice, currencyCode.name());
         return packageRepository.saveOrUpdate(existingPackage);
     }
 
     private List<String> mergeExistingAndNewProductIds(String id, PackageRequest packageRequest) {
-        List<String> productIds = getProductPackageOrThrow(id).getProducts().stream().map(x -> x.getId()).collect(Collectors.toList());
+        List<String> productIds = getPackageOrThrowIfNotFound(id).getProducts().stream().map(x -> x.getId()).collect(Collectors.toList());
         productIds.addAll(packageRequest.productIds());
         return productIds;
     }
@@ -96,11 +96,11 @@ public class PackageService implements IPackageConvertibleRateService, IPackageS
         return products.stream().map(product -> product.getPrice()).reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
-    private Package getProductPackageOrThrow(String id) {
+    private Package getPackageOrThrowIfNotFound(String id) {
         return packageRepository.findById(id).orElseThrow(() -> new CodingExerciseRuntimeException(ErrorCode.PACKAGE_NOT_FOUND));
     }
 
-    private PackageResponse getPackageResponse(CurrencyCode currencyCode, Package productPackage) {
+    private PackageResponse createPackageResponse(CurrencyCode currencyCode, Package productPackage) {
         return new PackageResponse(productPackage.getId(),
                 productPackage.getName(),
                 productPackage.getDescription(),

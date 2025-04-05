@@ -23,7 +23,7 @@ public class ProductService implements IProductService {
     private final ProductServiceGateway productServiceGateway;
 
     @Override
-    public List<Product> getProductsFromApiAndValidate(List<String> productIds, CurrencyCode currencyCode) {
+    public List<Product> getProductDetailsFromApiAndValidate(List<String> productIds, CurrencyCode currencyCode) {
         Map<String, ProductApiResponse> productsById = productServiceGateway
                 .getAllProducts()
                 .stream()

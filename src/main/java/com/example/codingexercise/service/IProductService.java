@@ -7,6 +7,6 @@ import java.util.List;
 
 public interface IProductService {
 
-    List<Product> getProductsFromApiAndValidate(List<String> productIds, CurrencyCode currencyCode);
+    List<Product> getProductDetailsFromApiAndValidate(List<String> productIds, CurrencyCode currencyCode);
 
 }
