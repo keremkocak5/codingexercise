@@ -12,7 +12,7 @@ public class PackageServiceFactory {
     private final PackageServiceCurrencyConverterDecorator packageServiceCurrencyConverterDecorator;
 
     public IPackageService getPackageService(boolean isCurrency) {
-        return isCurrency ? packageService : packageServiceCurrencyConverterDecorator;
+        return isCurrency ? packageServiceCurrencyConverterDecorator : packageService;
     }
 
 }

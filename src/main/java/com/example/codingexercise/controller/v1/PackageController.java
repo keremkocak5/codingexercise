@@ -22,19 +22,19 @@ public class PackageController {
     @PostMapping(value = {"/currency/{optionalCurrency}", "/"})
     @Operation(summary = "Create package")
     public PackageResponse create(@RequestBody PackageRequest packageRequest, @PathVariable(name = "optionalCurrency", required = false) Optional<CurrencyCodeEnum> optionalCurrency) {
-        return packageServiceFactory.getPackageService(optionalCurrency.isPresent()).createPackage(packageRequest);
+        return packageServiceFactory.getPackageService(optionalCurrency.isPresent()).createPackage(packageRequest, getCurrencyDefaultUsd(optionalCurrency));
     }
 
     @GetMapping(value = {"/id/{id}/currency/{optionalCurrency}", "/id/{id}"})
     @Operation(summary = "Get package")
-    public ProductPackage get(@PathVariable String id, @PathVariable(name = "optionalCurrency", required = false) Optional<CurrencyCodeEnum> optionalCurrency) {
-        return packageServiceFactory.getPackageService(optionalCurrency.isPresent()).getProductPackage(id);
+    public PackageResponse get(@PathVariable String id, @PathVariable(name = "optionalCurrency", required = false) Optional<CurrencyCodeEnum> optionalCurrency) {
+        return packageServiceFactory.getPackageService(optionalCurrency.isPresent()).getProductPackage(id, getCurrencyDefaultUsd(optionalCurrency));
     }
 
     @GetMapping(value = {"/currency/{optionalCurrency}", "/"})
     @Operation(summary = "Get all packages")
-    public List<ProductPackage> get(@PathVariable(name = "optionalCurrency", required = false) Optional<CurrencyCodeEnum> optionalCurrency) {
-        return packageServiceFactory.getPackageService(optionalCurrency.isPresent()).getProductPackage();
+    public List<PackageResponse> get(@PathVariable(name = "optionalCurrency", required = false) Optional<CurrencyCodeEnum> optionalCurrency) {
+        return packageServiceFactory.getPackageService(optionalCurrency.isPresent()).getProductPackage(getCurrencyDefaultUsd(optionalCurrency));
     }
 
     @DeleteMapping(value = "/{id}")
@@ -43,5 +43,8 @@ public class PackageController {
         return packageServiceFactory.getPackageService(false).deletePackage(id);
     }
 
+    private static CurrencyCodeEnum getCurrencyDefaultUsd(Optional<CurrencyCodeEnum> optionalCurrency) {
+        return optionalCurrency.orElse(CurrencyCodeEnum.USD);
+    }
 
 }

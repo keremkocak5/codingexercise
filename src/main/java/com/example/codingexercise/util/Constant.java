@@ -12,7 +12,7 @@ public class Constant {
     timeout control et calisiyor mu diye
     delete interface degisecek ve yeni interfaceye gececek
     test yaz
-    incoming outgoing isimleri kontrol et
+    incoming outgoing isimleri kontrol et yeri de degisecek kesin
     bigdecimal ihmal etme
     clientlere interface yaz
     product id yoksa map cakilsin

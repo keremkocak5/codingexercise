@@ -1,9 +1,7 @@
 package com.example.codingexercise.gateway;
 
 import com.example.codingexercise.gateway.dto.Product;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,6 +34,10 @@ public class ProductServiceGateway {
             log.error("ProductServiceGateway.getProduct failed for id {}.", id);
             log.error("ProductServiceGateway.getProduct failed.", e);
             throw e;
+        } catch (Exception e) {
+            log.error("ProductServiceGateway.getProduct failed for id {}.", id);
+            log.error("ProductServiceGateway.getProducts failed.", e);
+            throw new RuntimeException(e);
         }
     }
 
@@ -48,9 +50,8 @@ public class ProductServiceGateway {
         } catch (HttpClientErrorException e) {
             log.error("ProductServiceGateway.getProducts failed.", e);
             throw e;
-        } catch (JsonMappingException e) {
-            throw new RuntimeException(e);
-        } catch (JsonProcessingException e) {
+        } catch (Exception e) {
+            log.error("ProductServiceGateway.getProducts failed.", e);
             throw new RuntimeException(e);
         }
     }
