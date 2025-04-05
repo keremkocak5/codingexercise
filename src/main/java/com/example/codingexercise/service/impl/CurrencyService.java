@@ -3,6 +3,7 @@ package com.example.codingexercise.service.impl;
 import com.example.codingexercise.enums.CurrencyCodeEnum;
 import com.example.codingexercise.gateway.FrankfurterServiceGateway;
 import com.example.codingexercise.service.ICurrencyService;
+import com.example.codingexercise.util.Constant;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +17,9 @@ public class CurrencyService implements ICurrencyService {
 
     @Override
     public BigDecimal getCurrencyBaseUsd(CurrencyCodeEnum currencyCode) {
+        if (Constant.USD.equals(currencyCode.name())) {
+            throw new RuntimeException("kerem");
+        }
         return frankfurterServiceGateway
                 .getCurrencyBaseUsd(currencyCode)
                 .rates()

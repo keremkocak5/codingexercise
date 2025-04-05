@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Primary
-public class PackageRateService implements IPackageConvertibleRateService, IPackageService {
+public class PackageService implements IPackageConvertibleRateService, IPackageService {
 
     private final PackageRepository packageRepository;
     private final IProductService productService;

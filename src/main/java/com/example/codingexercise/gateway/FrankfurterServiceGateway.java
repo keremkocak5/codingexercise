@@ -2,6 +2,7 @@ package com.example.codingexercise.gateway;
 
 import com.example.codingexercise.enums.CurrencyCodeEnum;
 import com.example.codingexercise.gateway.dto.Rate;
+import com.example.codingexercise.util.Constant;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,7 +21,7 @@ public class FrankfurterServiceGateway {
 
     public Rate getCurrencyBaseUsd(CurrencyCodeEnum currencyCode) {
         try {
-            return frankfurterRestTemplate.getForObject(frankfurterServiceUrl + "/v1/latest?base=USD&symbols={currencyCode}", Rate.class, currencyCode.name());
+            return frankfurterRestTemplate.getForObject(frankfurterServiceUrl + "/v1/latest?base=" + Constant.USD + "&symbols={currencyCode}", Rate.class, currencyCode.name());
         } catch (Exception e) {
             log.error("FrankfurterServiceGateway.getCurrencyBaseUsd failed for currencyCodeEnum {}.", currencyCode);
             log.error("FrankfurterServiceGateway.getCurrencyBaseUsd failed.", e);
