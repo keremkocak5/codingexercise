@@ -22,13 +22,13 @@ public abstract class PackageServiceDecorator implements IPackageConvertibleRate
     }
 
     @Override
-    public PackageResponse getProductPackage(String id, CurrencyCode currencyCode) {
-        return wrappee.getProductPackage(id, currencyCode); // kerem
+    public PackageResponse getPackage(String id, CurrencyCode currencyCode) {
+        return wrappee.getPackage(id, currencyCode); // kerem
     }
 
     @Override
-    public List<PackageResponse> getProductPackage(CurrencyCode currencyCode) {
-        return wrappee.getProductPackage(currencyCode);
+    public List<PackageResponse> getPackage(CurrencyCode currencyCode) {
+        return wrappee.getPackage(currencyCode);
     }
 
 }

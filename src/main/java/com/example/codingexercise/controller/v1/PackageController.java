@@ -6,7 +6,9 @@ import com.example.codingexercise.gateway.dto.outgoing.PackageResponse;
 import com.example.codingexercise.service.IPackageService;
 import com.example.codingexercise.service.impl.PackageServiceFactory;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,6 +17,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/v1/packages")
 @RequiredArgsConstructor
+@Validated
 public class PackageController {
 
     private final PackageServiceFactory packageServiceFactory;
@@ -22,20 +25,20 @@ public class PackageController {
 
     @PostMapping(value = {"/currency/{optionalCurrency}", "/"})
     @Operation(summary = "Create package")
-    public PackageResponse create(@RequestBody PackageRequest packageRequest, @PathVariable(name = "optionalCurrency", required = false) Optional<CurrencyCode> optionalCurrency) {
+    public PackageResponse create(@Valid @RequestBody PackageRequest packageRequest, @PathVariable(name = "optionalCurrency", required = false) Optional<CurrencyCode> optionalCurrency) {
         return packageServiceFactory.getPackageService(optionalCurrency).createPackage(packageRequest, getCurrencyDefaultUsd(optionalCurrency));
     }
 
     @GetMapping(value = {"/id/{id}/currency/{optionalCurrency}", "/id/{id}"})
     @Operation(summary = "Get package")
     public PackageResponse get(@PathVariable String id, @PathVariable(name = "optionalCurrency", required = false) Optional<CurrencyCode> optionalCurrency) {
-        return packageServiceFactory.getPackageService(optionalCurrency).getProductPackage(id, getCurrencyDefaultUsd(optionalCurrency));
+        return packageServiceFactory.getPackageService(optionalCurrency).getPackage(id, getCurrencyDefaultUsd(optionalCurrency));
     }
 
     @GetMapping(value = {"/currency/{optionalCurrency}", "/"})
     @Operation(summary = "Get all packages")
     public List<PackageResponse> get(@PathVariable(name = "optionalCurrency", required = false) Optional<CurrencyCode> optionalCurrency) {
-        return packageServiceFactory.getPackageService(optionalCurrency).getProductPackage(getCurrencyDefaultUsd(optionalCurrency));
+        return packageServiceFactory.getPackageService(optionalCurrency).getPackage(getCurrencyDefaultUsd(optionalCurrency));
     }
 
     @DeleteMapping(value = "/{id}")

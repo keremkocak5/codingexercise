@@ -12,8 +12,6 @@ public class Constant {
     test yaz
     validasyon
     incoming outgoing isimleri kontrol et yeri de degisecek kesin
-    bigdecimal ihmal etme
-    product id yoksa map cakilsin
     update api eklenecek
 
     ============
@@ -23,6 +21,8 @@ public class Constant {
     base usd frankfurter contant olsun mu
         clientlere interface yaz gerek yok
     product package sinifindaki setterleri kaldir
+    bigdecimal ihmal etme
+    product id yoksa map cakilsin
 
      */
 }

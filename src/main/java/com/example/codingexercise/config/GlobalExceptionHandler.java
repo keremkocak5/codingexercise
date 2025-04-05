@@ -23,5 +23,4 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(500), e.getMessage());
     }
 
-
 }

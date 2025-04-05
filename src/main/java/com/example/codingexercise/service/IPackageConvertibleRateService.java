@@ -10,8 +10,8 @@ public interface IPackageConvertibleRateService {
 
     PackageResponse createPackage(PackageRequest packageRequest, CurrencyCode currencyCode);
 
-    PackageResponse getProductPackage(String id, CurrencyCode currencyCode);
+    PackageResponse getPackage(String id, CurrencyCode currencyCode);
 
-    List<PackageResponse> getProductPackage(CurrencyCode currencyCode);
+    List<PackageResponse> getPackage(CurrencyCode currencyCode);
 
 }

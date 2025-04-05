@@ -23,7 +23,7 @@ public class ProductServiceGateway {
     @Value("${rest.product.url}")
     private String productServiceUrl;
 
-    public List<ProductApiResponse> getProducts() {
+    public List<ProductApiResponse> getAllProducts() {
         try {
             String response = productRestTemplate.getForObject(productServiceUrl + "/api/v1/products", String.class);
             ObjectMapper objectMapper = new ObjectMapper();
