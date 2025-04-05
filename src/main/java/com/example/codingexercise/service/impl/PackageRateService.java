@@ -5,6 +5,7 @@ import com.example.codingexercise.gateway.dto.incoming.PackageRequest;
 import com.example.codingexercise.gateway.dto.outgoing.PackageResponse;
 import com.example.codingexercise.model.ProductPackage;
 import com.example.codingexercise.repository.PackageRepository;
+import com.example.codingexercise.service.IPackageConvertibleRateService;
 import com.example.codingexercise.service.IPackageService;
 import com.example.codingexercise.service.IProductService;
 import lombok.NonNull;
@@ -20,7 +21,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Primary
-public class PackageService implements IPackageService {
+public class PackageRateService implements IPackageConvertibleRateService, IPackageService {
 
     private final PackageRepository packageRepository;
     private final IProductService productService;

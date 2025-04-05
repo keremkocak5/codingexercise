@@ -19,5 +19,6 @@ public class Constant {
     update api eklenecek
     currencyler enum mu olsun
     base usd frankfurter contant olsun mu
+    product package sinifindaki setterleri kaldir
      */
 }

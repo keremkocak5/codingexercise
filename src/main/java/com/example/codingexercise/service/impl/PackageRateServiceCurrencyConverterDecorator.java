@@ -4,8 +4,8 @@ import com.example.codingexercise.enums.CurrencyCodeEnum;
 import com.example.codingexercise.gateway.dto.incoming.PackageRequest;
 import com.example.codingexercise.gateway.dto.outgoing.PackageResponse;
 import com.example.codingexercise.service.ICurrencyService;
-import com.example.codingexercise.service.IPackageService;
-import com.example.codingexercise.service.PackageServiceDecorator;
+import com.example.codingexercise.service.IPackageConvertibleRateService;
+import com.example.codingexercise.service.PackageRateServiceDecorator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,9 +14,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class PackageServiceCurrencyConverterDecorator extends PackageServiceDecorator {
+public class PackageRateServiceCurrencyConverterDecorator extends PackageRateServiceDecorator {
 
-    public PackageServiceCurrencyConverterDecorator(IPackageService wrappee) {
+    public PackageRateServiceCurrencyConverterDecorator(IPackageConvertibleRateService wrappee) {
         super(wrappee);
     }
 
@@ -45,11 +45,6 @@ public class PackageServiceCurrencyConverterDecorator extends PackageServiceDeco
                 .stream()
                 .map(packageResponse -> getConvertedPackageResponse(rate, packageResponse))
                 .collect(Collectors.toUnmodifiableList());
-    }
-
-    @Override
-    public boolean deletePackage(String id) {
-        return super.deletePackage(id);
     }
 
     private static PackageResponse getConvertedPackageResponse(BigDecimal rate, PackageResponse packageResponse) {

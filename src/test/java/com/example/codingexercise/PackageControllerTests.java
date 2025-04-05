@@ -17,18 +17,18 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class PackageControllerTests {
 
-	private final TestRestTemplate restTemplate;
+    private final TestRestTemplate restTemplate;
     private final PackageRepository packageRepository;
 
     @Autowired
     PackageControllerTests(TestRestTemplate restTemplate, PackageRepository packageRepository) {
-		this.restTemplate = restTemplate;
+        this.restTemplate = restTemplate;
         this.packageRepository = packageRepository;
     }
 
     @Test
     void createPackage() {
-		ResponseEntity<ProductPackage> created = restTemplate.postForEntity("/packages", new ProductPackage(null, "Test Name", "Test Desc", List.of("prod1")), ProductPackage.class);
+        ResponseEntity<ProductPackage> created = restTemplate.postForEntity("/packages", new ProductPackage(null, "Test Name", "Test Desc", List.of("prod1")), ProductPackage.class);
         assertEquals(HttpStatus.OK, created.getStatusCode(), "Unexpected status code");
         ProductPackage createdBody = created.getBody();
         assertNotNull(createdBody, "Unexpected body");
