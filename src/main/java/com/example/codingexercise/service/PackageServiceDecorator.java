@@ -31,4 +31,9 @@ public abstract class PackageServiceDecorator implements IPackageConvertibleRate
         return wrappee.getPackage(currencyCode);
     }
 
+    @Override
+    public PackageResponse updatePackage(String id, PackageRequest packageRequest, CurrencyCode currencyCode) {
+        return wrappee.updatePackage(id, packageRequest, currencyCode);
+    }
+
 }

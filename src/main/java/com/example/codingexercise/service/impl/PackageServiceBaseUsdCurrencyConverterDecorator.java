@@ -61,6 +61,13 @@ public class PackageServiceBaseUsdCurrencyConverterDecorator extends PackageServ
                 .collect(Collectors.toUnmodifiableList());
     }
 
+    @Override
+    public PackageResponse updatePackage(String id, PackageRequest packageRequest, CurrencyCode currencyCode) {
+        BigDecimal rate = currencyService.getCurrencyBaseUsd(currencyCode);
+        PackageResponse packageResponse = super.updatePackage(id, packageRequest, currencyCode);
+        return recalculatePriceAndTotalPrice(rate, packageResponse); // due to non-atomic nature, in case recalculatePriceAndTotalPrice fails, the updates will be reflected in the repository, tough user will receive internal server error.
+    }
+
     private static PackageResponse recalculatePriceAndTotalPrice(BigDecimal rate, PackageResponse packageResponse) {
         return new PackageResponse(packageResponse.id(),
                 packageResponse.name(),

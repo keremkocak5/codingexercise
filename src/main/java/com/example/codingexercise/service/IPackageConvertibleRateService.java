@@ -14,4 +14,5 @@ public interface IPackageConvertibleRateService {
 
     List<PackageResponse> getPackage(CurrencyCode currencyCode);
 
+    PackageResponse updatePackage(String id, PackageRequest packageRequest, CurrencyCode currencyCode);
 }

@@ -13,7 +13,7 @@ public class PackageRepository {
 
     private volatile Map<String, Package> database = new ConcurrentHashMap<>();
 
-    public Package save(Package productPackage) {
+    public Package saveOrUpdate(Package productPackage) {
         database.put(productPackage.getId(), productPackage);
         return productPackage;
     }

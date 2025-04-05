@@ -10,10 +10,9 @@ public class Constant {
     /*
     kerem
     test yaz
-    validasyon
     incoming outgoing isimleri kontrol et yeri de degisecek kesin
-    update api eklenecek
-
+    dokuman
+    docker
     ============
         timeout control et calisiyor mu diye
     delete interface degisecek ve yeni interfaceye gececek
@@ -23,6 +22,8 @@ public class Constant {
     product package sinifindaki setterleri kaldir
     bigdecimal ihmal etme
     product id yoksa map cakilsin
+    update api eklenecek
+    validasyon
 
      */
 }

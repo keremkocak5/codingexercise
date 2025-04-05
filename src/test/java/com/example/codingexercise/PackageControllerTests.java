@@ -46,7 +46,7 @@ class PackageControllerTests {
 
     @Test
     void getPackage() {
-        Package productPackage = packageRepository.save("Test Name 2", "Test Desc 2", List.of("prod2"));
+        Package productPackage = packageRepository.saveOrUpdate("Test Name 2", "Test Desc 2", List.of("prod2"));
         ResponseEntity<Package> fetched = restTemplate.getForEntity("/packages/{id}", Package.class, productPackage.getId());
         assertEquals(HttpStatus.OK, fetched.getStatusCode(), "Unexpected status code");
         Package fetchedBody = fetched.getBody();
@@ -59,8 +59,8 @@ class PackageControllerTests {
 
     @Test
     void listPackages() {
-        Package productPackage1 = packageRepository.save("Test Name 1", "Test Desc 1", List.of("prod1"));
-        Package productPackage2 = packageRepository.save("Test Name 2", "Test Desc 2", List.of("prod2"));
+        Package productPackage1 = packageRepository.saveOrUpdate("Test Name 1", "Test Desc 1", List.of("prod1"));
+        Package productPackage2 = packageRepository.saveOrUpdate("Test Name 2", "Test Desc 2", List.of("prod2"));
 
         ResponseEntity<Object> fetched = restTemplate.getForEntity("/packages", Object.class);
         assertEquals(HttpStatus.OK, fetched.getStatusCode(), "Unexpected status code");

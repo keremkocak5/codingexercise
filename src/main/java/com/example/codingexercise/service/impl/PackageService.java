@@ -31,7 +31,7 @@ public class PackageService implements IPackageConvertibleRateService, IPackageS
 
     @Override
     public PackageResponse createPackage(@NonNull PackageRequest packageRequest, @NonNull CurrencyCode currencyCode) {
-        Package newProductPackage = getProductsAndPersistPackage(packageRequest, currencyCode);
+        Package newProductPackage = getProductsAndSavePackage(packageRequest, currencyCode);
         return new PackageResponse(newProductPackage.getId(),
                 newProductPackage.getName(),
                 newProductPackage.getDescription(),
@@ -42,7 +42,7 @@ public class PackageService implements IPackageConvertibleRateService, IPackageS
 
     @Override
     public PackageResponse getPackage(String id, @NonNull CurrencyCode currencyCode) {
-        Package productPackage = packageRepository.findById(id).orElseThrow(() -> new CodingExerciseRuntimeException(ErrorCode.PACKAGE_NOT_FOUND));
+        Package productPackage = getProductPackageOrThrow(id);
         return getPackageResponse(currencyCode, productPackage);
     }
 
@@ -56,15 +56,48 @@ public class PackageService implements IPackageConvertibleRateService, IPackageS
     }
 
     @Override
+    public PackageResponse updatePackage(String id, PackageRequest packageRequest, CurrencyCode currencyCode) {
+        Package newProductPackage = getProductsAndUpdatePackage(id, packageRequest, currencyCode);
+        return new PackageResponse(newProductPackage.getId(),
+                newProductPackage.getName(),
+                newProductPackage.getDescription(),
+                newProductPackage.getProducts(),
+                newProductPackage.getTotalPrice(),
+                newProductPackage.getCurrencyCode());
+    }
+
+    @Override
     public boolean deletePackage(String id) {
         return packageRepository.deleteById(id);
     }
 
-    private Package getProductsAndPersistPackage(PackageRequest packageRequest, CurrencyCode currencyCode) {
-        List<Product> products = productService.getProductsFromApiAndValidate(packageRequest, currencyCode);
-        BigDecimal totalPrice = products.stream().map(product -> product.getPrice()).reduce(BigDecimal.ZERO, BigDecimal::add);
+    private Package getProductsAndSavePackage(PackageRequest packageRequest, CurrencyCode currencyCode) {
+        List<Product> products = productService.getProductsFromApiAndValidate(packageRequest.productIds(), currencyCode);
+        BigDecimal totalPrice = getTotalPrice(products);
         Package newPackage = new Package(UUID.randomUUID().toString(), packageRequest.name(), packageRequest.description(), products, totalPrice, currencyCode.name());
-        return packageRepository.save(newPackage);
+        return packageRepository.saveOrUpdate(newPackage);
+    }
+
+    private Package getProductsAndUpdatePackage(String id, PackageRequest packageRequest, CurrencyCode currencyCode) {
+        List<String> mergedProductIds = mergeExistingAndNewProductIds(id, packageRequest);
+        List<Product> products = productService.getProductsFromApiAndValidate(mergedProductIds, currencyCode);
+        BigDecimal totalPrice = getTotalPrice(products);
+        Package existingPackage = new Package(id, packageRequest.name(), packageRequest.description(), products, totalPrice, currencyCode.name());
+        return packageRepository.saveOrUpdate(existingPackage);
+    }
+
+    private List<String> mergeExistingAndNewProductIds(String id, PackageRequest packageRequest) {
+        List<String> productIds = getProductPackageOrThrow(id).getProducts().stream().map(x -> x.getId()).collect(Collectors.toList());
+        productIds.addAll(packageRequest.productIds());
+        return productIds;
+    }
+
+    private static BigDecimal getTotalPrice(List<Product> products) {
+        return products.stream().map(product -> product.getPrice()).reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    private Package getProductPackageOrThrow(String id) {
+        return packageRepository.findById(id).orElseThrow(() -> new CodingExerciseRuntimeException(ErrorCode.PACKAGE_NOT_FOUND));
     }
 
     private PackageResponse getPackageResponse(CurrencyCode currencyCode, Package productPackage) {

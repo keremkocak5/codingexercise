@@ -23,22 +23,28 @@ public class PackageController {
     private final PackageServiceFactory packageServiceFactory;
     private final IPackageService packageService;
 
-    @PostMapping(value = {"/currency/{optionalCurrency}", "/"})
+    @PostMapping(value = {"/currency/{currency}", "/"})
     @Operation(summary = "Create package")
-    public PackageResponse create(@Valid @RequestBody PackageRequest packageRequest, @PathVariable(name = "optionalCurrency", required = false) Optional<CurrencyCode> optionalCurrency) {
-        return packageServiceFactory.getPackageService(optionalCurrency).createPackage(packageRequest, getCurrencyDefaultUsd(optionalCurrency));
+    public PackageResponse create(@Valid @RequestBody PackageRequest packageRequest, @PathVariable(name = "currency", required = false) Optional<CurrencyCode> currency) {
+        return packageServiceFactory.getPackageService(currency).createPackage(packageRequest, getCurrencyDefaultUsd(currency));
     }
 
-    @GetMapping(value = {"/id/{id}/currency/{optionalCurrency}", "/id/{id}"})
+    @GetMapping(value = {"/id/{id}/currency/{currency}", "/id/{id}"})
     @Operation(summary = "Get package")
-    public PackageResponse get(@PathVariable String id, @PathVariable(name = "optionalCurrency", required = false) Optional<CurrencyCode> optionalCurrency) {
-        return packageServiceFactory.getPackageService(optionalCurrency).getPackage(id, getCurrencyDefaultUsd(optionalCurrency));
+    public PackageResponse get(@PathVariable String id, @PathVariable(name = "currency", required = false) Optional<CurrencyCode> currency) {
+        return packageServiceFactory.getPackageService(currency).getPackage(id, getCurrencyDefaultUsd(currency));
     }
 
-    @GetMapping(value = {"/currency/{optionalCurrency}", "/"})
+    @GetMapping(value = {"/currency/{currency}", "/"})
     @Operation(summary = "Get all packages")
-    public List<PackageResponse> get(@PathVariable(name = "optionalCurrency", required = false) Optional<CurrencyCode> optionalCurrency) {
-        return packageServiceFactory.getPackageService(optionalCurrency).getPackage(getCurrencyDefaultUsd(optionalCurrency));
+    public List<PackageResponse> get(@PathVariable(name = "currency", required = false) Optional<CurrencyCode> currency) {
+        return packageServiceFactory.getPackageService(currency).getPackage(getCurrencyDefaultUsd(currency));
+    }
+
+    @PostMapping(value = {"/id/{id}/currency/{currency}", "/id/{id}"})
+    @Operation(summary = "Update package")
+    public PackageResponse update(@PathVariable String id, @Valid @RequestBody PackageRequest packageRequest, @PathVariable(name = "currency", required = false) Optional<CurrencyCode> currency) {
+        return packageServiceFactory.getPackageService(currency).updatePackage(id, packageRequest, getCurrencyDefaultUsd(currency));
     }
 
     @DeleteMapping(value = "/{id}")
@@ -47,8 +53,8 @@ public class PackageController {
         return packageService.deletePackage(id);
     }
 
-    private static CurrencyCode getCurrencyDefaultUsd(Optional<CurrencyCode> optionalCurrency) {
-        return optionalCurrency.orElse(CurrencyCode.USD);
+    private static CurrencyCode getCurrencyDefaultUsd(Optional<CurrencyCode> currency) {
+        return currency.orElse(CurrencyCode.USD);
     }
 
 }
