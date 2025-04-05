@@ -10,21 +10,20 @@ public class PackageRepository {
 
     private volatile Map<String, ProductPackage> productPackages = new Hashtable<>();
 
-    public ProductPackage create(String name, String description, List<String> productIds) {
-        ProductPackage newProductPackage = new ProductPackage(UUID.randomUUID().toString(), name, description, productIds);
-        productPackages.put(newProductPackage.getId(), newProductPackage);
-        return newProductPackage;
+    public ProductPackage save(ProductPackage productPackage) {
+        productPackages.put(productPackage.getId(), productPackage);
+        return productPackage;
     }
 
-    public Optional<ProductPackage> get(String id) {
+    public Optional<ProductPackage> findById(String id) {
         return Optional.ofNullable(productPackages.getOrDefault(id, null));
     }
 
-    public List<ProductPackage> get() {
+    public List<ProductPackage> findAll() {
         return productPackages.values().stream().toList();
     }
 
-    public boolean delete(String id) {
+    public boolean deleteById(String id) {
         return productPackages.remove(id) != null;
     }
 

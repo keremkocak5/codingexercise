@@ -27,14 +27,14 @@ public class PackageRateServiceCurrencyConverterDecorator extends PackageRateSer
     public PackageResponse createPackage(PackageRequest packageRequest, CurrencyCodeEnum currencyCode) {
         BigDecimal rate = currencyService.getCurrencyBaseUsd(currencyCode);
         PackageResponse packageResponse = super.createPackage(packageRequest, currencyCode);
-        return getConvertedPackageResponse(rate, packageResponse);
+        return recalculateTotalPrice(rate, packageResponse);
     }
 
     @Override
     public PackageResponse getProductPackage(String id, CurrencyCodeEnum currencyCode) {
         BigDecimal rate = currencyService.getCurrencyBaseUsd(currencyCode);
         PackageResponse packageResponse = super.getProductPackage(id, currencyCode);
-        return getConvertedPackageResponse(rate, packageResponse);
+        return recalculateTotalPrice(rate, packageResponse);
     }
 
     @Override
@@ -43,16 +43,16 @@ public class PackageRateServiceCurrencyConverterDecorator extends PackageRateSer
         List<PackageResponse> packageResponses = super.getProductPackage(currencyCode);
         return packageResponses
                 .stream()
-                .map(packageResponse -> getConvertedPackageResponse(rate, packageResponse))
+                .map(packageResponse -> recalculateTotalPrice(rate, packageResponse))
                 .collect(Collectors.toUnmodifiableList());
     }
 
-    private static PackageResponse getConvertedPackageResponse(BigDecimal rate, PackageResponse packageResponse) {
+    private static PackageResponse recalculateTotalPrice(BigDecimal rate, PackageResponse packageResponse) {
         return new PackageResponse(packageResponse.id(),
                 packageResponse.name(),
                 packageResponse.description(),
                 packageResponse.productIds(),
-                packageResponse.totalCost().multiply(rate),
+                packageResponse.totalPrice().multiply(rate),
                 packageResponse.currencyCode());
     }
 

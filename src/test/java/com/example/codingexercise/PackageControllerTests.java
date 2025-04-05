@@ -36,7 +36,7 @@ class PackageControllerTests {
         assertEquals("Test Desc", createdBody.getDescription(), "Unexpected description");
         assertEquals(List.of("prod1"), createdBody.getProductIds(), "Unexpected products");
 
-        ProductPackage productPackage = packageRepository.get(createdBody.getId());
+        ProductPackage productPackage = packageRepository.findById(createdBody.getId());
         assertNotNull(productPackage, "Unexpected package");
         assertEquals(createdBody.getId(), productPackage.getId(), "Unexpected id");
         assertEquals(createdBody.getName(), productPackage.getName(), "Unexpected name");
@@ -46,7 +46,7 @@ class PackageControllerTests {
 
     @Test
     void getPackage() {
-        ProductPackage productPackage = packageRepository.create("Test Name 2", "Test Desc 2", List.of("prod2"));
+        ProductPackage productPackage = packageRepository.save("Test Name 2", "Test Desc 2", List.of("prod2"));
         ResponseEntity<ProductPackage> fetched = restTemplate.getForEntity("/packages/{id}", ProductPackage.class, productPackage.getId());
         assertEquals(HttpStatus.OK, fetched.getStatusCode(), "Unexpected status code");
         ProductPackage fetchedBody = fetched.getBody();
@@ -59,8 +59,8 @@ class PackageControllerTests {
 
     @Test
     void listPackages() {
-        ProductPackage productPackage1 = packageRepository.create("Test Name 1", "Test Desc 1", List.of("prod1"));
-        ProductPackage productPackage2 = packageRepository.create("Test Name 2", "Test Desc 2", List.of("prod2"));
+        ProductPackage productPackage1 = packageRepository.save("Test Name 1", "Test Desc 1", List.of("prod1"));
+        ProductPackage productPackage2 = packageRepository.save("Test Name 2", "Test Desc 2", List.of("prod2"));
 
         ResponseEntity<Object> fetched = restTemplate.getForEntity("/packages", Object.class);
         assertEquals(HttpStatus.OK, fetched.getStatusCode(), "Unexpected status code");

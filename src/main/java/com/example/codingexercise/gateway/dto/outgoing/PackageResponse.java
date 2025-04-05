@@ -7,6 +7,6 @@ public record PackageResponse(String id,
                               String name,
                               String description,
                               List<String> productIds,
-                              BigDecimal totalCost,
+                              BigDecimal totalPrice,
                               String currencyCode) {
 }
