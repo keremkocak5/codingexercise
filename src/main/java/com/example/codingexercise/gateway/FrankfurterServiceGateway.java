@@ -1,7 +1,9 @@
 package com.example.codingexercise.gateway;
 
-import com.example.codingexercise.enums.CurrencyCodeEnum;
-import com.example.codingexercise.gateway.dto.Rate;
+import com.example.codingexercise.enums.CurrencyCode;
+import com.example.codingexercise.enums.ErrorCode;
+import com.example.codingexercise.exception.CodingExerciseRuntimeException;
+import com.example.codingexercise.gateway.dto.FrankfurterApiRateResponse;
 import com.example.codingexercise.util.Constant;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,13 +21,13 @@ public class FrankfurterServiceGateway {
     @Value("${rest.frankfurter.url}")
     private String frankfurterServiceUrl;
 
-    public Rate getCurrencyBaseUsd(CurrencyCodeEnum currencyCode) {
+    public FrankfurterApiRateResponse getCurrencyBaseUsd(CurrencyCode currencyCode) {
         try {
-            return frankfurterRestTemplate.getForObject(frankfurterServiceUrl + "/v1/latest?base=" + Constant.USD + "&symbols={currencyCode}", Rate.class, currencyCode.name());
+            return frankfurterRestTemplate.getForObject(frankfurterServiceUrl + "/v1/latest?base=" + Constant.USD + "&symbols={currencyCode}", FrankfurterApiRateResponse.class, currencyCode.name());
         } catch (Exception e) {
-            log.error("FrankfurterServiceGateway.getCurrencyBaseUsd failed for currencyCodeEnum {}.", currencyCode);
+            log.error("FrankfurterServiceGateway.getCurrencyBaseUsd failed for currencyCode {}.", currencyCode);
             log.error("FrankfurterServiceGateway.getCurrencyBaseUsd failed.", e);
-            throw e;
+            throw new CodingExerciseRuntimeException(ErrorCode.RATE_CONNECTION_ERROR);
         }
     }
 }

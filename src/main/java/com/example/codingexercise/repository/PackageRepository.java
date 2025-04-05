@@ -1,30 +1,33 @@
 package com.example.codingexercise.repository;
 
-import com.example.codingexercise.model.ProductPackage;
+import com.example.codingexercise.model.Package;
 import org.springframework.stereotype.Repository;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Repository
 public class PackageRepository {
 
-    private volatile Map<String, ProductPackage> productPackages = new Hashtable<>();
+    private volatile Map<String, Package> database = new ConcurrentHashMap<>();
 
-    public ProductPackage save(ProductPackage productPackage) {
-        productPackages.put(productPackage.getId(), productPackage);
+    public Package save(Package productPackage) {
+        database.put(productPackage.getId(), productPackage);
         return productPackage;
     }
 
-    public Optional<ProductPackage> findById(String id) {
-        return Optional.ofNullable(productPackages.getOrDefault(id, null));
+    public Optional<Package> findById(String id) {
+        return Optional.ofNullable(database.getOrDefault(id, null));
     }
 
-    public List<ProductPackage> findAll() {
-        return productPackages.values().stream().toList();
+    public List<Package> findAll() {
+        return database.values().stream().toList();
     }
 
     public boolean deleteById(String id) {
-        return productPackages.remove(id) != null;
+        return database.remove(id) != null;
     }
 
 }

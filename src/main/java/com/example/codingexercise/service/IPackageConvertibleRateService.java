@@ -1,6 +1,6 @@
 package com.example.codingexercise.service;
 
-import com.example.codingexercise.enums.CurrencyCodeEnum;
+import com.example.codingexercise.enums.CurrencyCode;
 import com.example.codingexercise.gateway.dto.incoming.PackageRequest;
 import com.example.codingexercise.gateway.dto.outgoing.PackageResponse;
 
@@ -8,10 +8,10 @@ import java.util.List;
 
 public interface IPackageConvertibleRateService {
 
-    PackageResponse createPackage(PackageRequest packageRequest, CurrencyCodeEnum currencyCodeEnum);
+    PackageResponse createPackage(PackageRequest packageRequest, CurrencyCode currencyCode);
 
-    PackageResponse getProductPackage(String id, CurrencyCodeEnum currencyCodeEnum);
+    PackageResponse getProductPackage(String id, CurrencyCode currencyCode);
 
-    List<PackageResponse> getProductPackage(CurrencyCodeEnum currencyCodeEnum);
+    List<PackageResponse> getProductPackage(CurrencyCode currencyCode);
 
 }

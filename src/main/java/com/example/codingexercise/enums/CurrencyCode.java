@@ -1,6 +1,6 @@
 package com.example.codingexercise.enums;
 
-public enum CurrencyCodeEnum {
+public enum CurrencyCode {
 
     AUD,
     BGN,

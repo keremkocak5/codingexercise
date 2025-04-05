@@ -1,11 +1,11 @@
 package com.example.codingexercise.service.impl;
 
-import com.example.codingexercise.enums.CurrencyCodeEnum;
+import com.example.codingexercise.enums.CurrencyCode;
 import com.example.codingexercise.gateway.dto.incoming.PackageRequest;
 import com.example.codingexercise.gateway.dto.outgoing.PackageResponse;
 import com.example.codingexercise.service.ICurrencyService;
 import com.example.codingexercise.service.IPackageConvertibleRateService;
-import com.example.codingexercise.service.PackageRateServiceDecorator;
+import com.example.codingexercise.service.PackageServiceDecorator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,9 +14,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class PackageRateServiceCurrencyConverterDecorator extends PackageRateServiceDecorator {
+public class PackageServiceBaseUsdCurrencyConverterDecorator extends PackageServiceDecorator {
 
-    public PackageRateServiceCurrencyConverterDecorator(IPackageConvertibleRateService wrappee) {
+    public PackageServiceBaseUsdCurrencyConverterDecorator(IPackageConvertibleRateService wrappee) {
         super(wrappee);
     }
 
@@ -24,21 +24,21 @@ public class PackageRateServiceCurrencyConverterDecorator extends PackageRateSer
     private ICurrencyService currencyService;
 
     @Override
-    public PackageResponse createPackage(PackageRequest packageRequest, CurrencyCodeEnum currencyCode) {
+    public PackageResponse createPackage(PackageRequest packageRequest, CurrencyCode currencyCode) {
         BigDecimal rate = currencyService.getCurrencyBaseUsd(currencyCode);
         PackageResponse packageResponse = super.createPackage(packageRequest, currencyCode);
         return recalculateTotalPrice(rate, packageResponse);
     }
 
     @Override
-    public PackageResponse getProductPackage(String id, CurrencyCodeEnum currencyCode) {
+    public PackageResponse getProductPackage(String id, CurrencyCode currencyCode) {
         BigDecimal rate = currencyService.getCurrencyBaseUsd(currencyCode);
         PackageResponse packageResponse = super.getProductPackage(id, currencyCode);
         return recalculateTotalPrice(rate, packageResponse);
     }
 
     @Override
-    public List<PackageResponse> getProductPackage(CurrencyCodeEnum currencyCode) {
+    public List<PackageResponse> getProductPackage(CurrencyCode currencyCode) {
         BigDecimal rate = currencyService.getCurrencyBaseUsd(currencyCode);
         List<PackageResponse> packageResponses = super.getProductPackage(currencyCode);
         return packageResponses
@@ -51,7 +51,7 @@ public class PackageRateServiceCurrencyConverterDecorator extends PackageRateSer
         return new PackageResponse(packageResponse.id(),
                 packageResponse.name(),
                 packageResponse.description(),
-                packageResponse.productIds(),
+                packageResponse.products(),
                 packageResponse.totalPrice().multiply(rate),
                 packageResponse.currencyCode());
     }

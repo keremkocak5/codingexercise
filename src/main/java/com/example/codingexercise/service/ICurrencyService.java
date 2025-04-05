@@ -1,11 +1,11 @@
 package com.example.codingexercise.service;
 
-import com.example.codingexercise.enums.CurrencyCodeEnum;
+import com.example.codingexercise.enums.CurrencyCode;
 
 import java.math.BigDecimal;
 
 public interface ICurrencyService {
 
-    BigDecimal getCurrencyBaseUsd(CurrencyCodeEnum currencyCode);
+    BigDecimal getCurrencyBaseUsd(CurrencyCode currencyCode);
 
 }

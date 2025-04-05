@@ -1,9 +1,13 @@
 package com.example.codingexercise.service.impl;
 
-import com.example.codingexercise.enums.CurrencyCodeEnum;
+import com.example.codingexercise.enums.CurrencyCode;
+import com.example.codingexercise.enums.ErrorCode;
+import com.example.codingexercise.exception.CodingExerciseRuntimeException;
+import com.example.codingexercise.gateway.dto.ProductApiResponse;
 import com.example.codingexercise.gateway.dto.incoming.PackageRequest;
 import com.example.codingexercise.gateway.dto.outgoing.PackageResponse;
-import com.example.codingexercise.model.ProductPackage;
+import com.example.codingexercise.model.Package;
+import com.example.codingexercise.model.Product;
 import com.example.codingexercise.repository.PackageRepository;
 import com.example.codingexercise.service.IPackageConvertibleRateService;
 import com.example.codingexercise.service.IPackageService;
@@ -28,29 +32,28 @@ public class PackageService implements IPackageConvertibleRateService, IPackageS
     private final IProductService productService;
 
     @Override
-    public PackageResponse createPackage(@NonNull PackageRequest packageRequest, @NonNull CurrencyCodeEnum currencyCode) {
-        BigDecimal totalPrice = validateProductsAndFindTotalPrice(packageRequest.productIds());
-        ProductPackage productPackage = persistPackage(packageRequest, totalPrice, currencyCode);
-        return new PackageResponse(productPackage.getId(),
-                productPackage.getName(),
-                productPackage.getDescription(),
-                productPackage.getProductIds(),
-                productPackage.getTotalPrice(),
-                productPackage.getCurrencyCode());
+    public PackageResponse createPackage(@NonNull PackageRequest packageRequest, @NonNull CurrencyCode currencyCode) {
+        Package newProductPackage = persistPackage(packageRequest, currencyCode);
+        return new PackageResponse(newProductPackage.getId(),
+                newProductPackage.getName(),
+                newProductPackage.getDescription(),
+                newProductPackage.getProducts(),
+                newProductPackage.getTotalPrice(),
+                newProductPackage.getCurrencyCode());
     }
 
     @Override
-    public PackageResponse getProductPackage(String id, @NonNull CurrencyCodeEnum currencyCodeEnum) {
-        ProductPackage productPackage = packageRepository.findById(id).orElseThrow(() -> new RuntimeException("kerem"));
-        return getPackageResponse(currencyCodeEnum, productPackage);
+    public PackageResponse getProductPackage(String id, @NonNull CurrencyCode currencyCode) {
+        Package productPackage = packageRepository.findById(id).orElseThrow(() -> new CodingExerciseRuntimeException(ErrorCode.PACKAGE_NOT_FOUND));
+        return getPackageResponse(currencyCode, productPackage);
     }
 
     @Override
-    public List<PackageResponse> getProductPackage(@NonNull CurrencyCodeEnum currencyCodeEnum) {
-        List<ProductPackage> productPackages = packageRepository.findAll();
+    public List<PackageResponse> getProductPackage(@NonNull CurrencyCode currencyCode) {
+        List<Package> productPackages = packageRepository.findAll();
         return productPackages
                 .stream()
-                .map(pack -> getPackageResponse(currencyCodeEnum, pack))
+                .map(pack -> getPackageResponse(currencyCode, pack))
                 .collect(Collectors.toUnmodifiableList());
     }
 
@@ -59,27 +62,27 @@ public class PackageService implements IPackageConvertibleRateService, IPackageS
         return packageRepository.deleteById(id);
     }
 
-    private ProductPackage persistPackage(PackageRequest packageRequest, BigDecimal totalPrice, CurrencyCodeEnum currencyCode) {
-        ProductPackage newProductPackage = new ProductPackage(UUID.randomUUID().toString(), packageRequest.name(), packageRequest.description(), packageRequest.productIds(), totalPrice, currencyCode.name());
+    private Package persistPackage(PackageRequest packageRequest, CurrencyCode currencyCode) {
+        Map<String, ProductApiResponse> productApiResponseMap = productService.getProducts();
+        List<Product> products = packageRequest.productIds()
+                .stream()
+                .map(pack -> productApiResponseMap.computeIfAbsent(pack, s -> {
+                    throw new CodingExerciseRuntimeException(ErrorCode.PRODUCT_NOT_FOUND);
+                }))
+                .map(pack -> new Product(pack.id(), pack.name(), BigDecimal.valueOf(pack.usdPrice()), currencyCode.name()))
+                .collect(Collectors.toList());
+        BigDecimal totalPrice = products.stream().map(product -> product.getPrice()).reduce(BigDecimal.ZERO, BigDecimal::add);
+        Package newProductPackage = new Package(UUID.randomUUID().toString(), packageRequest.name(), packageRequest.description(), products, totalPrice, currencyCode.name());
         return packageRepository.save(newProductPackage);
     }
 
-    private PackageResponse getPackageResponse(CurrencyCodeEnum currencyCodeEnum, ProductPackage productPackage) {
+    private PackageResponse getPackageResponse(CurrencyCode currencyCode, Package productPackage) {
         return new PackageResponse(productPackage.getId(),
                 productPackage.getName(),
                 productPackage.getDescription(),
-                productPackage.getProductIds(),
+                productPackage.getProducts(),
                 productPackage.getTotalPrice(),
-                currencyCodeEnum.name());
-    }
-
-    private BigDecimal validateProductsAndFindTotalPrice(List<String> productIds) {
-        Map<String, Integer> productIdAndUsdPrices = productService.getProductIdAndUsdPrice();
-        return BigDecimal.valueOf(productIds
-                .stream()
-                .map(productId -> productIdAndUsdPrices.get(productId))
-                .mapToInt(price -> price)
-                .sum());
+                currencyCode.name());
     }
 
 }

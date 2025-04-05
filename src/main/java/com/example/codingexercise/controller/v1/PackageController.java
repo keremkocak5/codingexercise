@@ -1,6 +1,6 @@
 package com.example.codingexercise.controller.v1;
 
-import com.example.codingexercise.enums.CurrencyCodeEnum;
+import com.example.codingexercise.enums.CurrencyCode;
 import com.example.codingexercise.gateway.dto.incoming.PackageRequest;
 import com.example.codingexercise.gateway.dto.outgoing.PackageResponse;
 import com.example.codingexercise.service.IPackageService;
@@ -22,19 +22,19 @@ public class PackageController {
 
     @PostMapping(value = {"/currency/{optionalCurrency}", "/"})
     @Operation(summary = "Create package")
-    public PackageResponse create(@RequestBody PackageRequest packageRequest, @PathVariable(name = "optionalCurrency", required = false) Optional<CurrencyCodeEnum> optionalCurrency) {
+    public PackageResponse create(@RequestBody PackageRequest packageRequest, @PathVariable(name = "optionalCurrency", required = false) Optional<CurrencyCode> optionalCurrency) {
         return packageServiceFactory.getPackageService(optionalCurrency).createPackage(packageRequest, getCurrencyDefaultUsd(optionalCurrency));
     }
 
     @GetMapping(value = {"/id/{id}/currency/{optionalCurrency}", "/id/{id}"})
     @Operation(summary = "Get package")
-    public PackageResponse get(@PathVariable String id, @PathVariable(name = "optionalCurrency", required = false) Optional<CurrencyCodeEnum> optionalCurrency) {
+    public PackageResponse get(@PathVariable String id, @PathVariable(name = "optionalCurrency", required = false) Optional<CurrencyCode> optionalCurrency) {
         return packageServiceFactory.getPackageService(optionalCurrency).getProductPackage(id, getCurrencyDefaultUsd(optionalCurrency));
     }
 
     @GetMapping(value = {"/currency/{optionalCurrency}", "/"})
     @Operation(summary = "Get all packages")
-    public List<PackageResponse> get(@PathVariable(name = "optionalCurrency", required = false) Optional<CurrencyCodeEnum> optionalCurrency) {
+    public List<PackageResponse> get(@PathVariable(name = "optionalCurrency", required = false) Optional<CurrencyCode> optionalCurrency) {
         return packageServiceFactory.getPackageService(optionalCurrency).getProductPackage(getCurrencyDefaultUsd(optionalCurrency));
     }
 
@@ -44,8 +44,8 @@ public class PackageController {
         return packageService.deletePackage(id);
     }
 
-    private static CurrencyCodeEnum getCurrencyDefaultUsd(Optional<CurrencyCodeEnum> optionalCurrency) {
-        return optionalCurrency.orElse(CurrencyCodeEnum.USD);
+    private static CurrencyCode getCurrencyDefaultUsd(Optional<CurrencyCode> optionalCurrency) {
+        return optionalCurrency.orElse(CurrencyCode.USD);
     }
 
 }

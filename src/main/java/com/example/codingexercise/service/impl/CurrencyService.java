@@ -1,6 +1,8 @@
 package com.example.codingexercise.service.impl;
 
-import com.example.codingexercise.enums.CurrencyCodeEnum;
+import com.example.codingexercise.enums.CurrencyCode;
+import com.example.codingexercise.enums.ErrorCode;
+import com.example.codingexercise.exception.CodingExerciseRuntimeException;
 import com.example.codingexercise.gateway.FrankfurterServiceGateway;
 import com.example.codingexercise.service.ICurrencyService;
 import com.example.codingexercise.util.Constant;
@@ -16,9 +18,9 @@ public class CurrencyService implements ICurrencyService {
     private final FrankfurterServiceGateway frankfurterServiceGateway;
 
     @Override
-    public BigDecimal getCurrencyBaseUsd(CurrencyCodeEnum currencyCode) {
+    public BigDecimal getCurrencyBaseUsd(CurrencyCode currencyCode) {
         if (Constant.USD.equals(currencyCode.name())) {
-            throw new RuntimeException("kerem");
+            throw new CodingExerciseRuntimeException(ErrorCode.INVALID_BASE_RATE);
         }
         return frankfurterServiceGateway
                 .getCurrencyBaseUsd(currencyCode)
@@ -26,6 +28,6 @@ public class CurrencyService implements ICurrencyService {
                 .values()
                 .stream()
                 .findFirst()
-                .orElseThrow(() -> new RuntimeException("kerem"));
+                .orElseThrow(() -> new CodingExerciseRuntimeException(ErrorCode.RATE_CONNECTION_ERROR));
     }
 }

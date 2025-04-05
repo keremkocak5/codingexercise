@@ -1,6 +1,6 @@
 package com.example.codingexercise;
 
-import com.example.codingexercise.model.ProductPackage;
+import com.example.codingexercise.model.Package;
 import com.example.codingexercise.repository.PackageRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,15 +28,15 @@ class PackageControllerTests {
 
     @Test
     void createPackage() {
-        ResponseEntity<ProductPackage> created = restTemplate.postForEntity("/packages", new ProductPackage(null, "Test Name", "Test Desc", List.of("prod1")), ProductPackage.class);
+        ResponseEntity<Package> created = restTemplate.postForEntity("/packages", new Package(null, "Test Name", "Test Desc", List.of("prod1")), Package.class);
         assertEquals(HttpStatus.OK, created.getStatusCode(), "Unexpected status code");
-        ProductPackage createdBody = created.getBody();
+        Package createdBody = created.getBody();
         assertNotNull(createdBody, "Unexpected body");
         assertEquals("Test Name", createdBody.getName(), "Unexpected name");
         assertEquals("Test Desc", createdBody.getDescription(), "Unexpected description");
         assertEquals(List.of("prod1"), createdBody.getProductIds(), "Unexpected products");
 
-        ProductPackage productPackage = packageRepository.findById(createdBody.getId());
+        Package productPackage = packageRepository.findById(createdBody.getId());
         assertNotNull(productPackage, "Unexpected package");
         assertEquals(createdBody.getId(), productPackage.getId(), "Unexpected id");
         assertEquals(createdBody.getName(), productPackage.getName(), "Unexpected name");
@@ -46,10 +46,10 @@ class PackageControllerTests {
 
     @Test
     void getPackage() {
-        ProductPackage productPackage = packageRepository.save("Test Name 2", "Test Desc 2", List.of("prod2"));
-        ResponseEntity<ProductPackage> fetched = restTemplate.getForEntity("/packages/{id}", ProductPackage.class, productPackage.getId());
+        Package productPackage = packageRepository.save("Test Name 2", "Test Desc 2", List.of("prod2"));
+        ResponseEntity<Package> fetched = restTemplate.getForEntity("/packages/{id}", Package.class, productPackage.getId());
         assertEquals(HttpStatus.OK, fetched.getStatusCode(), "Unexpected status code");
-        ProductPackage fetchedBody = fetched.getBody();
+        Package fetchedBody = fetched.getBody();
         assertNotNull(fetchedBody, "Unexpected body");
         assertEquals(productPackage.getId(), fetchedBody.getId(), "Unexpected id");
         assertEquals(productPackage.getName(), fetchedBody.getName(), "Unexpected name");
@@ -59,8 +59,8 @@ class PackageControllerTests {
 
     @Test
     void listPackages() {
-        ProductPackage productPackage1 = packageRepository.save("Test Name 1", "Test Desc 1", List.of("prod1"));
-        ProductPackage productPackage2 = packageRepository.save("Test Name 2", "Test Desc 2", List.of("prod2"));
+        Package productPackage1 = packageRepository.save("Test Name 1", "Test Desc 1", List.of("prod1"));
+        Package productPackage2 = packageRepository.save("Test Name 2", "Test Desc 2", List.of("prod2"));
 
         ResponseEntity<Object> fetched = restTemplate.getForEntity("/packages", Object.class);
         assertEquals(HttpStatus.OK, fetched.getStatusCode(), "Unexpected status code");
