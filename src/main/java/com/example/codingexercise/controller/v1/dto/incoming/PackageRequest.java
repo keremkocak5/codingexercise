@@ -1,4 +1,4 @@
-package com.example.codingexercise.gateway.dto.incoming;
+package com.example.codingexercise.controller.v1.dto.incoming;
 
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;

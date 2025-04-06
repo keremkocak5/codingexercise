@@ -1,4 +1,4 @@
-package com.example.codingexercise.gateway.dto.outgoing;
+package com.example.codingexercise.controller.v1.dto.outgoing;
 
 import java.math.BigDecimal;
 

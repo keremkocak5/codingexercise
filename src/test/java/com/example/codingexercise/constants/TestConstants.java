@@ -1,13 +1,12 @@
 package com.example.codingexercise.constants;
 
 import com.example.codingexercise.gateway.dto.ProductApiResponse;
-import com.example.codingexercise.gateway.dto.incoming.PackageRequest;
-import com.example.codingexercise.gateway.dto.outgoing.PackageResponse;
-import com.example.codingexercise.gateway.dto.outgoing.ProductResponse;
+import com.example.codingexercise.controller.v1.dto.incoming.PackageRequest;
+import com.example.codingexercise.controller.v1.dto.outgoing.PackageResponse;
+import com.example.codingexercise.controller.v1.dto.outgoing.ProductResponse;
 import com.example.codingexercise.model.Product;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
