@@ -10,7 +10,6 @@ import com.example.codingexercise.service.IProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -33,7 +32,7 @@ public class ProductService implements IProductService {
                 .map(id -> productsById.computeIfAbsent(id, s -> {
                     throw new CodingExerciseRuntimeException(ErrorCode.PRODUCT_NOT_FOUND);
                 }))
-                .map(aProduct -> new Product(aProduct.id(), aProduct.name(), BigDecimal.valueOf(aProduct.usdPrice()), currencyCode.name()))
+                .map(aProduct -> new Product(aProduct.id(), aProduct.name(), aProduct.usdPrice(), currencyCode.name()))
                 .collect(Collectors.toList());
     }
 }

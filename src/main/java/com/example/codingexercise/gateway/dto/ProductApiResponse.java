@@ -1,4 +1,6 @@
 package com.example.codingexercise.gateway.dto;
 
-public record ProductApiResponse(String id, String name, int usdPrice) {
+import java.math.BigDecimal;
+
+public record ProductApiResponse(String id, String name, BigDecimal usdPrice) {
 }

@@ -1,7 +1,7 @@
 package com.example.codingexercise.controller.v1;
 
 import com.example.codingexercise.config.GlobalExceptionHandler;
-import com.example.codingexercise.controller.v1.constants.TestConstants;
+import com.example.codingexercise.constants.TestConstants;
 import com.example.codingexercise.enums.CurrencyCode;
 import com.example.codingexercise.gateway.dto.incoming.PackageRequest;
 import com.example.codingexercise.gateway.dto.outgoing.PackageResponse;
