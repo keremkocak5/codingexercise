@@ -78,15 +78,18 @@ public class PackageService implements IPackageConvertibleRateService, IPackageS
     }
 
     private Package getProductsAndUpdatePackage(String id, PackageRequest packageRequest, CurrencyCode currencyCode) {
-        List<String> mergedProductIds = mergeExistingAndNewProductIds(id, packageRequest);
+        List<String> mergedProductIds = mergeExistingAndNewProductIdsIfPackageFound(id, packageRequest);
         List<Product> products = productService.getProductDetailsFromApiAndValidate(mergedProductIds, currencyCode);
         BigDecimal totalPrice = getTotalPrice(products);
         Package existingPackage = new Package(id, packageRequest.name(), packageRequest.description(), products, totalPrice, currencyCode.name());
         return packageRepository.saveOrUpdate(existingPackage);
     }
 
-    private List<String> mergeExistingAndNewProductIds(String id, PackageRequest packageRequest) {
-        List<String> productIds = getPackageOrThrowIfNotFound(id).getProducts().stream().map(Product::getId).collect(Collectors.toList());
+    private List<String> mergeExistingAndNewProductIdsIfPackageFound(String id, PackageRequest packageRequest) {
+        List<String> productIds = getPackageOrThrowIfNotFound(id).getProducts()
+                .stream()
+                .map(Product::getId)
+                .collect(Collectors.toList());
         productIds.addAll(packageRequest.productIds());
         return productIds;
     }
