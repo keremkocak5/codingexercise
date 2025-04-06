@@ -5,12 +5,13 @@ import lombok.Getter;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.UUID;
 
 @Getter
 @AllArgsConstructor
 public class Package {
 
-    private final String id; // kerem burayi UUID yapayim mi
+    private final UUID id;
     private final String name;
     private final String description;
     private final List<Product> products;

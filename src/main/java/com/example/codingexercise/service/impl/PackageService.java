@@ -40,7 +40,7 @@ public class PackageService implements IPackageConvertibleRateService, IPackageS
     }
 
     @Override
-    public PackageResponse getPackage(@NonNull String id, @NonNull CurrencyCode currencyCode) {
+    public PackageResponse getPackage(@NonNull UUID id, @NonNull CurrencyCode currencyCode) {
         Package aPackage = getPackageOrThrowIfNotFound(id);
         return createPackageResponse(currencyCode, aPackage);
     }
@@ -55,7 +55,7 @@ public class PackageService implements IPackageConvertibleRateService, IPackageS
     }
 
     @Override
-    public PackageResponse updatePackage(@NonNull String id, @NonNull PackageRequest packageRequest, @NonNull CurrencyCode currencyCode) {
+    public PackageResponse updatePackage(@NonNull UUID id, @NonNull PackageRequest packageRequest, @NonNull CurrencyCode currencyCode) {
         Package updatedPackage = getProductsAndUpdatePackage(id, packageRequest, currencyCode);
         return new PackageResponse(updatedPackage.getId(),
                 updatedPackage.getName(),
@@ -66,18 +66,18 @@ public class PackageService implements IPackageConvertibleRateService, IPackageS
     }
 
     @Override
-    public boolean deletePackage(@NonNull String id) {
+    public boolean deletePackage(@NonNull UUID id) {
         return packageRepository.deleteById(id);
     }
 
     private Package getProductsAndSavePackage(PackageRequest packageRequest, CurrencyCode currencyCode) {
         List<Product> products = productService.getProductDetailsFromApiAndValidate(packageRequest.productIds(), currencyCode);
         BigDecimal totalPrice = getTotalPrice(products);
-        Package newPackage = new Package(UUID.randomUUID().toString(), packageRequest.name(), packageRequest.description(), products, totalPrice, currencyCode.name());
+        Package newPackage = new Package(UUID.randomUUID(), packageRequest.name(), packageRequest.description(), products, totalPrice, currencyCode.name());
         return packageRepository.saveOrUpdate(newPackage);
     }
 
-    private Package getProductsAndUpdatePackage(String id, PackageRequest packageRequest, CurrencyCode currencyCode) {
+    private Package getProductsAndUpdatePackage(UUID id, PackageRequest packageRequest, CurrencyCode currencyCode) {
         List<String> mergedProductIds = mergeExistingAndNewProductIdsIfPackageFound(id, packageRequest);
         List<Product> products = productService.getProductDetailsFromApiAndValidate(mergedProductIds, currencyCode);
         BigDecimal totalPrice = getTotalPrice(products);
@@ -85,7 +85,7 @@ public class PackageService implements IPackageConvertibleRateService, IPackageS
         return packageRepository.saveOrUpdate(existingPackage);
     }
 
-    private List<String> mergeExistingAndNewProductIdsIfPackageFound(String id, PackageRequest packageRequest) {
+    private List<String> mergeExistingAndNewProductIdsIfPackageFound(UUID id, PackageRequest packageRequest) {
         List<String> productIds = getPackageOrThrowIfNotFound(id).getProducts()
                 .stream()
                 .map(Product::getId)
@@ -98,7 +98,7 @@ public class PackageService implements IPackageConvertibleRateService, IPackageS
         return products.stream().map(Product::getPrice).reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
-    private Package getPackageOrThrowIfNotFound(String id) {
+    private Package getPackageOrThrowIfNotFound(UUID id) {
         return packageRepository.findById(id).orElseThrow(() -> new CodingExerciseRuntimeException(ErrorCode.PACKAGE_NOT_FOUND));
     }
 

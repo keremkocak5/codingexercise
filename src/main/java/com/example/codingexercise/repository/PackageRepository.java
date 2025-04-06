@@ -6,19 +6,20 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Repository
 public class PackageRepository {
 
-    private final Map<String, Package> database = new ConcurrentHashMap<>();
+    private final Map<UUID, Package> database = new ConcurrentHashMap<>();
 
     public Package saveOrUpdate(Package productPackage) {
         database.put(productPackage.getId(), productPackage);
         return productPackage;
     }
 
-    public Optional<Package> findById(String id) {
+    public Optional<Package> findById(UUID id) {
         return Optional.ofNullable(database.getOrDefault(id, null));
     }
 
@@ -26,7 +27,7 @@ public class PackageRepository {
         return database.values().stream().toList();
     }
 
-    public boolean deleteById(String id) {
+    public boolean deleteById(UUID id) {
         return database.remove(id) != null;
     }
 

@@ -1,7 +1,9 @@
 package com.example.codingexercise.service;
 
+import java.util.UUID;
+
 public interface IPackageService {
 
-    boolean deletePackage(String id);
+    boolean deletePackage(UUID id);
 
 }

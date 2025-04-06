@@ -5,14 +5,15 @@ import com.example.codingexercise.gateway.dto.incoming.PackageRequest;
 import com.example.codingexercise.gateway.dto.outgoing.PackageResponse;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface IPackageConvertibleRateService {
 
     PackageResponse createPackage(PackageRequest packageRequest, CurrencyCode currencyCode);
 
-    PackageResponse getPackage(String id, CurrencyCode currencyCode);
+    PackageResponse getPackage(UUID id, CurrencyCode currencyCode);
 
     List<PackageResponse> getPackage(CurrencyCode currencyCode);
 
-    PackageResponse updatePackage(String id, PackageRequest packageRequest, CurrencyCode currencyCode);
+    PackageResponse updatePackage(UUID id, PackageRequest packageRequest, CurrencyCode currencyCode);
 }

@@ -1,6 +1,14 @@
-http://localhost:8080/codingexercise/swagger-ui/index.html
 
-// kerem: if this was a real db, then the @transactional annotation would have been critical
+# Package API
+
+A simple in-memory app for storing packages, product details, and an embedded currency converter.
+
+
+
+## Running the application
+
+### a. Docker Image  
+Make sure you have Java 17, Maven, and Docker installed on your device. Then run the following command at the root folder (where Dockerfile resides) of your project.
 
 mvn clean package
 
@@ -8,9 +16,20 @@ docker build -t codingexercice .
 
 docker run -p 8080:8080 codingexercice
 
+### b. Maven
+
+Run the following command 
+
+mvn spring-boot:run -Dspring-boot.run.profiles=dev
+
+## Accessing the APIs
+
+http://localhost:8080/codingexercise/swagger-ui/index.html
 
 
-
+## Dependencies
+Due to its in-memory database, this app is not horizontally scalable.
+If Frankfurter API or Products API become unresponsive, the coding exercise will fail. No fallback / resilience mechanisms implemented. 
 
 
 Technical Integration Document for Package Management API
@@ -40,9 +59,8 @@ Create a package
 Base URL
 The base URL for the API is:
 
-bash
-Copy
 http://localhost:8080/codingexercise/v1/packages
+
 Authentication
 This API does not currently require any authentication mechanisms such as API keys or OAuth.
 
@@ -257,6 +275,3 @@ The API provides appropriate HTTP status codes and messages to indicate errors. 
 404 Not Found: The specified resource (package or product) was not found.
 
 500 Internal Server Error: A generic error message when an unexpected server issue occurs.
-
-Conclusion
-This API allows for the management of packages, including the ability to retrieve, create, update, and delete packages based on different parameters such as package ID and currency. The API follows RESTful principles and uses JSON as the format for requests and responses.

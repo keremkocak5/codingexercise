@@ -4,17 +4,13 @@ public class Constant {
 
     public static final String USD = "USD";
 
-    public static final int UUID_LENGTH = 36;
-
     private Constant() {
     }
 
     /*
     kerem
-    test yaz
     incoming outgoing isimleri kontrol et yeri de degisecek kesin
     dokuman
-    docker
     ============
         timeout control et calisiyor mu diye
     delete interface degisecek ve yeni interfaceye gececek

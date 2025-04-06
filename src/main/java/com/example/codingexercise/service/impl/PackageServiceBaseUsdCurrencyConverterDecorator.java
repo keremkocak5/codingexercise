@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @Slf4j
@@ -39,7 +40,7 @@ public class PackageServiceBaseUsdCurrencyConverterDecorator implements IPackage
     }
 
     @Override
-    public PackageResponse getPackage(String id, CurrencyCode currencyCode) {
+    public PackageResponse getPackage(UUID id, CurrencyCode currencyCode) {
         BigDecimal rate = currencyService.getCurrencyBaseUsd(currencyCode);
         PackageResponse packageResponse = packageConvertibleRateService.getPackage(id, currencyCode);
         return recalculatePriceAndTotalPrice(rate, packageResponse);
@@ -56,7 +57,7 @@ public class PackageServiceBaseUsdCurrencyConverterDecorator implements IPackage
     }
 
     @Override
-    public PackageResponse updatePackage(String id, PackageRequest packageRequest, CurrencyCode currencyCode) {
+    public PackageResponse updatePackage(UUID id, PackageRequest packageRequest, CurrencyCode currencyCode) {
         BigDecimal rate = currencyService.getCurrencyBaseUsd(currencyCode);
         PackageResponse packageResponse = packageConvertibleRateService.updatePackage(id, packageRequest, currencyCode);
         return recalculatePriceAndTotalPrice(rate, packageResponse); // due to non-atomic nature, in case recalculatePriceAndTotalPrice fails, the updates will be reflected in the repository, tough user will receive internal server error.

@@ -24,6 +24,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
@@ -96,7 +97,7 @@ class PackageControllerTest {
     @Test
     void updateShouldReturnPackageWhenCurrencyNotDeclared() throws Exception {
         when(packageServiceFactory.getPackageService(Optional.empty())).thenReturn(packageService);
-        when(packageService.updatePackage("4eef06bd-c5d2-4a75-9d30-3ac302c59035", TestConstants.packageRequest, CurrencyCode.USD)).thenReturn(TestConstants.packageResponse);
+        when(packageService.updatePackage(UUID.fromString("4eef06bd-c5d2-4a75-9d30-3ac302c59035"), TestConstants.packageRequest, CurrencyCode.USD)).thenReturn(TestConstants.packageResponse);
 
         MvcResult result = mockMvc.perform(post("/v1/packages/id/4eef06bd-c5d2-4a75-9d30-3ac302c59035")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -108,14 +109,14 @@ class PackageControllerTest {
         PackageResponse packageResponse = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<PackageResponse>() {
         });
         assertThat(packageResponse, is(TestConstants.packageResponse));
-        verify(packageService, times(1)).updatePackage("4eef06bd-c5d2-4a75-9d30-3ac302c59035", TestConstants.packageRequest, CurrencyCode.USD);
+        verify(packageService, times(1)).updatePackage(UUID.fromString("4eef06bd-c5d2-4a75-9d30-3ac302c59035"), TestConstants.packageRequest, CurrencyCode.USD);
         verify(packageServiceBaseUsdCurrencyConverterDecorator, times(0)).updatePackage(any(), any(), any());
     }
 
     @Test
     void updateShouldReturnPackageWhenCurrencyDeclared() throws Exception {
         when(packageServiceFactory.getPackageService(Optional.of(CurrencyCode.TRY))).thenReturn(packageServiceBaseUsdCurrencyConverterDecorator);
-        when(packageServiceBaseUsdCurrencyConverterDecorator.updatePackage("4eef06bd-c5d2-4a75-9d30-3ac302c59035", TestConstants.packageRequest, CurrencyCode.TRY)).thenReturn(TestConstants.packageResponse);
+        when(packageServiceBaseUsdCurrencyConverterDecorator.updatePackage(UUID.fromString("4eef06bd-c5d2-4a75-9d30-3ac302c59035"), TestConstants.packageRequest, CurrencyCode.TRY)).thenReturn(TestConstants.packageResponse);
 
         MvcResult result = mockMvc.perform(post("/v1/packages/id/4eef06bd-c5d2-4a75-9d30-3ac302c59035/currency/TRY")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -128,13 +129,13 @@ class PackageControllerTest {
         });
         assertThat(packageResponse, is(TestConstants.packageResponse));
         verify(packageService, times(0)).updatePackage(any(), any(), any());
-        verify(packageServiceBaseUsdCurrencyConverterDecorator, times(1)).updatePackage("4eef06bd-c5d2-4a75-9d30-3ac302c59035", TestConstants.packageRequest, CurrencyCode.TRY);
+        verify(packageServiceBaseUsdCurrencyConverterDecorator, times(1)).updatePackage(UUID.fromString("4eef06bd-c5d2-4a75-9d30-3ac302c59035"), TestConstants.packageRequest, CurrencyCode.TRY);
     }
 
     @Test
     void getShouldReturnPackageWhenIdDeclaredCurrencyNotDeclared() throws Exception {
         when(packageServiceFactory.getPackageService(Optional.empty())).thenReturn(packageService);
-        when(packageService.getPackage("4eef06bd-c5d2-4a75-9d30-3ac302c59035", CurrencyCode.USD)).thenReturn(TestConstants.packageResponse);
+        when(packageService.getPackage(UUID.fromString("4eef06bd-c5d2-4a75-9d30-3ac302c59035"), CurrencyCode.USD)).thenReturn(TestConstants.packageResponse);
 
         MvcResult result = mockMvc.perform(get("/v1/packages/id/4eef06bd-c5d2-4a75-9d30-3ac302c59035"))
                 .andExpect(status().isOk())
@@ -144,14 +145,14 @@ class PackageControllerTest {
         PackageResponse packageResponse = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<PackageResponse>() {
         });
         assertThat(packageResponse, is(TestConstants.packageResponse));
-        verify(packageService, times(1)).getPackage("4eef06bd-c5d2-4a75-9d30-3ac302c59035", CurrencyCode.USD);
+        verify(packageService, times(1)).getPackage(UUID.fromString("4eef06bd-c5d2-4a75-9d30-3ac302c59035"), CurrencyCode.USD);
         verify(packageServiceBaseUsdCurrencyConverterDecorator, times(0)).getPackage(any(), any());
     }
 
     @Test
     void getShouldReturnPackageWhenIdDeclaredCurrencyDeclared() throws Exception {
         when(packageServiceFactory.getPackageService(Optional.of(CurrencyCode.AUD))).thenReturn(packageServiceBaseUsdCurrencyConverterDecorator);
-        when(packageServiceBaseUsdCurrencyConverterDecorator.getPackage("4eef06bd-c5d2-4a75-9d30-3ac302c59035", CurrencyCode.AUD)).thenReturn(TestConstants.packageResponse);
+        when(packageServiceBaseUsdCurrencyConverterDecorator.getPackage(UUID.fromString("4eef06bd-c5d2-4a75-9d30-3ac302c59035"), CurrencyCode.AUD)).thenReturn(TestConstants.packageResponse);
 
         MvcResult result = mockMvc.perform(get("/v1/packages/id/4eef06bd-c5d2-4a75-9d30-3ac302c59035/currency/AUD"))
                 .andExpect(status().isOk())
@@ -162,7 +163,7 @@ class PackageControllerTest {
         });
         assertThat(packageResponse, is(TestConstants.packageResponse));
         verify(packageService, times(0)).getPackage(any(), any());
-        verify(packageServiceBaseUsdCurrencyConverterDecorator, times(1)).getPackage("4eef06bd-c5d2-4a75-9d30-3ac302c59035", CurrencyCode.AUD);
+        verify(packageServiceBaseUsdCurrencyConverterDecorator, times(1)).getPackage(UUID.fromString("4eef06bd-c5d2-4a75-9d30-3ac302c59035"), CurrencyCode.AUD);
     }
 
     @Test
@@ -208,14 +209,14 @@ class PackageControllerTest {
 
     @Test
     void deleteShouldCallServiceOnceWhenIdNotEmpty() throws Exception {
-        when(packageService.deletePackage("4eef06bd-c5d2-4a75-9d30-3ac302c59035")).thenReturn(true);
+        when(packageService.deletePackage(UUID.fromString("4eef06bd-c5d2-4a75-9d30-3ac302c59035"))).thenReturn(true);
 
         mockMvc.perform(delete("/v1/packages/id/4eef06bd-c5d2-4a75-9d30-3ac302c59035"))
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString("true")))
                 .andReturn();
 
-        verify(packageService, times(1)).deletePackage("4eef06bd-c5d2-4a75-9d30-3ac302c59035");
+        verify(packageService, times(1)).deletePackage(UUID.fromString("4eef06bd-c5d2-4a75-9d30-3ac302c59035"));
     }
 
     @Test
