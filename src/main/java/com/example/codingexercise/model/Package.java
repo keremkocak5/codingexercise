@@ -10,7 +10,7 @@ import java.util.List;
 @AllArgsConstructor
 public class Package {
 
-    private final String id;
+    private final String id; // kerem burayi UUID yapayim mi
     private final String name;
     private final String description;
     private final List<Product> products;

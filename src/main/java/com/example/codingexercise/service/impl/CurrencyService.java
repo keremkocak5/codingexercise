@@ -6,6 +6,7 @@ import com.example.codingexercise.exception.CodingExerciseRuntimeException;
 import com.example.codingexercise.gateway.FrankfurterServiceGateway;
 import com.example.codingexercise.service.ICurrencyService;
 import com.example.codingexercise.util.Constant;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,7 +19,7 @@ public class CurrencyService implements ICurrencyService {
     private final FrankfurterServiceGateway frankfurterServiceGateway;
 
     @Override
-    public BigDecimal getCurrencyBaseUsd(CurrencyCode currencyCode) {
+    public @NonNull BigDecimal getCurrencyBaseUsd(@NonNull CurrencyCode currencyCode) {
         return Constant.USD.equals(currencyCode.name()) ? BigDecimal.ONE : frankfurterServiceGateway
                 .getCurrencyBaseUsd(currencyCode)
                 .rates()

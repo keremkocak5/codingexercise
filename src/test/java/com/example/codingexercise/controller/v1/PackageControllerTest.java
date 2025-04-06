@@ -3,6 +3,7 @@ package com.example.codingexercise.controller.v1;
 import com.example.codingexercise.config.GlobalExceptionHandler;
 import com.example.codingexercise.controller.v1.constants.TestConstants;
 import com.example.codingexercise.enums.CurrencyCode;
+import com.example.codingexercise.gateway.dto.incoming.PackageRequest;
 import com.example.codingexercise.gateway.dto.outgoing.PackageResponse;
 import com.example.codingexercise.service.impl.PackageService;
 import com.example.codingexercise.service.impl.PackageServiceBaseUsdCurrencyConverterDecorator;
@@ -15,6 +16,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.test.json.JacksonTester;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -26,8 +29,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -45,10 +47,88 @@ class PackageControllerTest {
     private PackageServiceFactory packageServiceFactory;
 
     private MockMvc mockMvc;
+    private JacksonTester<PackageRequest> packageRequestJacksonTester;
 
     @BeforeEach
     public void setup() {
         this.mockMvc = MockMvcBuilders.standaloneSetup(packageController).setControllerAdvice(GlobalExceptionHandler.class).build();
+        JacksonTester.initFields(this, new ObjectMapper());
+    }
+
+    @Test
+    void createShouldReturnPackageWhenCurrencyNotDeclared() throws Exception {
+        when(packageServiceFactory.getPackageService(Optional.empty())).thenReturn(packageService);
+        when(packageService.createPackage(TestConstants.packageRequest, CurrencyCode.USD)).thenReturn(TestConstants.packageResponse);
+
+        MvcResult result = mockMvc.perform(post("/v1/packages/")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(packageRequestJacksonTester.write(TestConstants.packageRequest).getJson()))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        PackageResponse packageResponse = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<PackageResponse>() {
+        });
+        assertThat(packageResponse, is(TestConstants.packageResponse));
+        verify(packageService, times(1)).createPackage(TestConstants.packageRequest, CurrencyCode.USD);
+        verify(packageServiceBaseUsdCurrencyConverterDecorator, times(0)).createPackage(any(), any());
+    }
+
+    @Test
+    void createShouldReturnPackageWhenCurrencyDeclared() throws Exception {
+        when(packageServiceFactory.getPackageService(Optional.of(CurrencyCode.BRL))).thenReturn(packageServiceBaseUsdCurrencyConverterDecorator);
+        when(packageServiceBaseUsdCurrencyConverterDecorator.createPackage(TestConstants.packageRequest, CurrencyCode.BRL)).thenReturn(TestConstants.packageResponse);
+
+        MvcResult result = mockMvc.perform(post("/v1/packages/currency/BRL")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(packageRequestJacksonTester.write(TestConstants.packageRequest).getJson()))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        PackageResponse packageResponse = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<PackageResponse>() {
+        });
+        assertThat(packageResponse, is(TestConstants.packageResponse));
+        verify(packageService, times(0)).createPackage(any(), any());
+        verify(packageServiceBaseUsdCurrencyConverterDecorator, times(1)).createPackage(TestConstants.packageRequest, CurrencyCode.BRL);
+    }
+
+    @Test
+    void updateShouldReturnPackageWhenCurrencyNotDeclared() throws Exception {
+        when(packageServiceFactory.getPackageService(Optional.empty())).thenReturn(packageService);
+        when(packageService.updatePackage("4eef06bd-c5d2-4a75-9d30-3ac302c59035", TestConstants.packageRequest, CurrencyCode.USD)).thenReturn(TestConstants.packageResponse);
+
+        MvcResult result = mockMvc.perform(post("/v1/packages/id/4eef06bd-c5d2-4a75-9d30-3ac302c59035")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(packageRequestJacksonTester.write(TestConstants.packageRequest).getJson()))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        PackageResponse packageResponse = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<PackageResponse>() {
+        });
+        assertThat(packageResponse, is(TestConstants.packageResponse));
+        verify(packageService, times(1)).updatePackage("4eef06bd-c5d2-4a75-9d30-3ac302c59035", TestConstants.packageRequest, CurrencyCode.USD);
+        verify(packageServiceBaseUsdCurrencyConverterDecorator, times(0)).updatePackage(any(), any(), any());
+    }
+
+    @Test
+    void updateShouldReturnPackageWhenCurrencyDeclared() throws Exception {
+        when(packageServiceFactory.getPackageService(Optional.of(CurrencyCode.TRY))).thenReturn(packageServiceBaseUsdCurrencyConverterDecorator);
+        when(packageServiceBaseUsdCurrencyConverterDecorator.updatePackage("4eef06bd-c5d2-4a75-9d30-3ac302c59035", TestConstants.packageRequest, CurrencyCode.TRY)).thenReturn(TestConstants.packageResponse);
+
+        MvcResult result = mockMvc.perform(post("/v1/packages/id/4eef06bd-c5d2-4a75-9d30-3ac302c59035/currency/TRY")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(packageRequestJacksonTester.write(TestConstants.packageRequest).getJson()))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        PackageResponse packageResponse = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<PackageResponse>() {
+        });
+        assertThat(packageResponse, is(TestConstants.packageResponse));
+        verify(packageService, times(0)).updatePackage(any(), any(), any());
+        verify(packageServiceBaseUsdCurrencyConverterDecorator, times(1)).updatePackage("4eef06bd-c5d2-4a75-9d30-3ac302c59035", TestConstants.packageRequest, CurrencyCode.TRY);
     }
 
     @Test
