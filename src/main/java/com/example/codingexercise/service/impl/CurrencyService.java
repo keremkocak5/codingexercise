@@ -19,10 +19,7 @@ public class CurrencyService implements ICurrencyService {
 
     @Override
     public BigDecimal getCurrencyBaseUsd(CurrencyCode currencyCode) {
-        if (Constant.USD.equals(currencyCode.name())) {
-            throw new CodingExerciseRuntimeException(ErrorCode.INVALID_BASE_RATE);
-        }
-        return frankfurterServiceGateway
+        return Constant.USD.equals(currencyCode.name()) ? BigDecimal.ONE : frankfurterServiceGateway
                 .getCurrencyBaseUsd(currencyCode)
                 .rates()
                 .values()

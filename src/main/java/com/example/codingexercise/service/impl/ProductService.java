@@ -30,10 +30,10 @@ public class ProductService implements IProductService {
                 .collect(Collectors.toMap(ProductApiResponse::id, Function.identity()));
         return productIds
                 .stream()
-                .map(pack -> productsById.computeIfAbsent(pack, s -> {
+                .map(id -> productsById.computeIfAbsent(id, s -> {
                     throw new CodingExerciseRuntimeException(ErrorCode.PRODUCT_NOT_FOUND);
                 }))
-                .map(pack -> new Product(pack.id(), pack.name(), BigDecimal.valueOf(pack.usdPrice()), currencyCode.name()))
+                .map(aProduct -> new Product(aProduct.id(), aProduct.name(), BigDecimal.valueOf(aProduct.usdPrice()), currencyCode.name()))
                 .collect(Collectors.toList());
     }
 }

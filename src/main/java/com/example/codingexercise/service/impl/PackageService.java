@@ -5,6 +5,7 @@ import com.example.codingexercise.enums.ErrorCode;
 import com.example.codingexercise.exception.CodingExerciseRuntimeException;
 import com.example.codingexercise.gateway.dto.incoming.PackageRequest;
 import com.example.codingexercise.gateway.dto.outgoing.PackageResponse;
+import com.example.codingexercise.gateway.dto.outgoing.ProductResponse;
 import com.example.codingexercise.model.Package;
 import com.example.codingexercise.model.Product;
 import com.example.codingexercise.repository.PackageRepository;
@@ -13,7 +14,6 @@ import com.example.codingexercise.service.IPackageService;
 import com.example.codingexercise.service.IProductService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -23,7 +23,6 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-@Primary
 public class PackageService implements IPackageConvertibleRateService, IPackageService {
 
     private final PackageRepository packageRepository;
@@ -35,7 +34,7 @@ public class PackageService implements IPackageConvertibleRateService, IPackageS
         return new PackageResponse(newPackage.getId(),
                 newPackage.getName(),
                 newPackage.getDescription(),
-                newPackage.getProducts(),
+                convertProductToProductResponse(newPackage.getProducts()),
                 newPackage.getTotalPrice(),
                 newPackage.getCurrencyCode());
     }
@@ -52,7 +51,7 @@ public class PackageService implements IPackageConvertibleRateService, IPackageS
         return productPackages
                 .stream()
                 .map(aPackage -> createPackageResponse(currencyCode, aPackage))
-                .collect(Collectors.toUnmodifiableList());
+                .toList();
     }
 
     @Override
@@ -61,7 +60,7 @@ public class PackageService implements IPackageConvertibleRateService, IPackageS
         return new PackageResponse(updatedPackage.getId(),
                 updatedPackage.getName(),
                 updatedPackage.getDescription(),
-                updatedPackage.getProducts(),
+                convertProductToProductResponse(updatedPackage.getProducts()),
                 updatedPackage.getTotalPrice(),
                 updatedPackage.getCurrencyCode());
     }
@@ -87,13 +86,13 @@ public class PackageService implements IPackageConvertibleRateService, IPackageS
     }
 
     private List<String> mergeExistingAndNewProductIds(String id, PackageRequest packageRequest) {
-        List<String> productIds = getPackageOrThrowIfNotFound(id).getProducts().stream().map(x -> x.getId()).collect(Collectors.toList());
+        List<String> productIds = getPackageOrThrowIfNotFound(id).getProducts().stream().map(Product::getId).collect(Collectors.toList());
         productIds.addAll(packageRequest.productIds());
         return productIds;
     }
 
     private static BigDecimal getTotalPrice(List<Product> products) {
-        return products.stream().map(product -> product.getPrice()).reduce(BigDecimal.ZERO, BigDecimal::add);
+        return products.stream().map(Product::getPrice).reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
     private Package getPackageOrThrowIfNotFound(String id) {
@@ -104,9 +103,16 @@ public class PackageService implements IPackageConvertibleRateService, IPackageS
         return new PackageResponse(productPackage.getId(),
                 productPackage.getName(),
                 productPackage.getDescription(),
-                productPackage.getProducts(),
+                convertProductToProductResponse(productPackage.getProducts()),
                 productPackage.getTotalPrice(),
                 currencyCode.name());
+    }
+
+    private List<ProductResponse> convertProductToProductResponse(List<Product> products) {
+        return products
+                .stream()
+                .map(aProduct -> new ProductResponse(aProduct.getId(), aProduct.getName(), aProduct.getPrice(), aProduct.getCurrencyCode()))
+                .toList();
     }
 
 }

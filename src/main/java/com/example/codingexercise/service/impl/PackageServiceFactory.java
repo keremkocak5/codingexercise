@@ -11,7 +11,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class PackageServiceFactory {
 
-    private final IPackageConvertibleRateService packageService;
+    private final PackageService packageService;
     private final PackageServiceBaseUsdCurrencyConverterDecorator packageServiceCurrencyConverterDecorator;
 
     public IPackageConvertibleRateService getPackageService(Optional<CurrencyCode> currency) {

@@ -4,6 +4,8 @@ public class Constant {
 
     public static final String USD = "USD";
 
+    public static final int UUID_LENGTH = 36;
+
     private Constant() {
     }
 
