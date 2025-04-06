@@ -11,6 +11,6 @@ public class TestConstants {
     private TestConstants() {
     }
 
-    public static PackageResponse packageResponse = new PackageResponse("abc", "packname", "packdesc", List.of(new ProductResponse("def", "prod1", BigDecimal.TEN, "USD")), BigDecimal.TEN, "USD");
+    public static PackageResponse packageResponse = new PackageResponse("4eef06bd-c5d2-4a75-9d30-3ac302c59035", "packname", "packdesc", List.of(new ProductResponse("def", "prod1", BigDecimal.TEN, "USD")), BigDecimal.TEN, "USD");
 
 }

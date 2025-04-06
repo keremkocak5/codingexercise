@@ -35,7 +35,7 @@ public class PackageController {
 
     @GetMapping(value = {"/id/{id}/currency/{currency}", "/id/{id}"})
     @Operation(summary = "Get package")
-    public PackageResponse get(@PathVariable @Size(min = UUID_LENGTH, max = UUID_LENGTH, message = UUID_LENGTH + " characters allowed for id") @Valid String id,
+    public PackageResponse get(@PathVariable @Valid @Size(min = UUID_LENGTH, max = UUID_LENGTH, message = UUID_LENGTH + " characters allowed for id") String id,
                                @PathVariable(name = "currency", required = false) Optional<CurrencyCode> currency) {
         return packageServiceFactory.getPackageService(currency).getPackage(id, getCurrencyDefaultUsd(currency));
     }
@@ -48,7 +48,7 @@ public class PackageController {
 
     @PostMapping(value = {"/id/{id}/currency/{currency}", "/id/{id}"})
     @Operation(summary = "Update package")
-    public PackageResponse update(@PathVariable @Size(min = UUID_LENGTH, max = UUID_LENGTH, message = UUID_LENGTH + " characters allowed for id") @Valid String id,
+    public PackageResponse update(@PathVariable @Valid @Size(min = UUID_LENGTH, max = UUID_LENGTH, message = UUID_LENGTH + " characters allowed for id") String id,
                                   @RequestBody @Valid PackageRequest packageRequest,
                                   @PathVariable(name = "currency", required = false) Optional<CurrencyCode> currency) {
         return packageServiceFactory.getPackageService(currency).updatePackage(id, packageRequest, getCurrencyDefaultUsd(currency));
@@ -56,7 +56,7 @@ public class PackageController {
 
     @DeleteMapping(value = "/id/{id}")
     @Operation(summary = "Delete package")
-    public boolean delete(@Valid @PathVariable @Size(min = UUID_LENGTH, max = UUID_LENGTH, message = UUID_LENGTH + " characters allowed for id") String id) {
+    public boolean delete(@PathVariable @Valid @Size(min = UUID_LENGTH, max = UUID_LENGTH, message = UUID_LENGTH + " characters allowed for id") String id) {
         return packageService.deletePackage(id);
     }
 

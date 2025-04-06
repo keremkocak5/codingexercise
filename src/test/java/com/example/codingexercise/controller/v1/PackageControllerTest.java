@@ -52,6 +52,40 @@ class PackageControllerTest {
     }
 
     @Test
+    void getShouldReturnPackageWhenIdDeclaredCurrencyNotDeclared() throws Exception {
+        when(packageServiceFactory.getPackageService(Optional.empty())).thenReturn(packageService);
+        when(packageService.getPackage("4eef06bd-c5d2-4a75-9d30-3ac302c59035", CurrencyCode.USD)).thenReturn(TestConstants.packageResponse);
+
+        MvcResult result = mockMvc.perform(get("/v1/packages/id/4eef06bd-c5d2-4a75-9d30-3ac302c59035"))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        PackageResponse packageResponse = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<PackageResponse>() {
+        });
+        assertThat(packageResponse, is(TestConstants.packageResponse));
+        verify(packageService, times(1)).getPackage("4eef06bd-c5d2-4a75-9d30-3ac302c59035", CurrencyCode.USD);
+        verify(packageServiceBaseUsdCurrencyConverterDecorator, times(0)).getPackage(any(), any());
+    }
+
+    @Test
+    void getShouldReturnPackageWhenIdDeclaredCurrencyDeclared() throws Exception {
+        when(packageServiceFactory.getPackageService(Optional.of(CurrencyCode.AUD))).thenReturn(packageServiceBaseUsdCurrencyConverterDecorator);
+        when(packageServiceBaseUsdCurrencyConverterDecorator.getPackage("4eef06bd-c5d2-4a75-9d30-3ac302c59035", CurrencyCode.AUD)).thenReturn(TestConstants.packageResponse);
+
+        MvcResult result = mockMvc.perform(get("/v1/packages/id/4eef06bd-c5d2-4a75-9d30-3ac302c59035/currency/AUD"))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        PackageResponse packageResponse = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<PackageResponse>() {
+        });
+        assertThat(packageResponse, is(TestConstants.packageResponse));
+        verify(packageService, times(0)).getPackage(any(), any());
+        verify(packageServiceBaseUsdCurrencyConverterDecorator, times(1)).getPackage("4eef06bd-c5d2-4a75-9d30-3ac302c59035", CurrencyCode.AUD);
+    }
+
+    @Test
     void getShouldReturnAllPackagesWhenCurrencyNotDeclared() throws Exception {
         when(packageServiceFactory.getPackageService(Optional.empty())).thenReturn(packageService);
         when(packageService.getPackage(CurrencyCode.USD)).thenReturn(List.of(TestConstants.packageResponse));
