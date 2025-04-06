@@ -24,7 +24,7 @@ class CurrencyServiceTest {
     private CurrencyService currencyService;
 
     @Mock
-    FrankfurterServiceGateway frankfurterServiceGateway;
+    private FrankfurterServiceGateway frankfurterServiceGateway;
 
     @Test
     void getCurrencyBaseUsdShouldReturnOneWhenInputUsd() {

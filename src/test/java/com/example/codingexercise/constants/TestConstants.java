@@ -22,5 +22,5 @@ public class TestConstants {
     public static final Product product2 = new Product("a2", "kindle", BigDecimal.ONE, "USD" );
     public static final ProductApiResponse productApiResponse1 = new ProductApiResponse("a1", "helmet", BigDecimal.TEN);
     public static final ProductApiResponse productApiResponse2 = new ProductApiResponse("a2", "kindle", BigDecimal.ONE);
-
+    public static final com.example.codingexercise.model.Package package1 = new com.example.codingexercise.model.Package(UUID.fromString("4eef06bd-c5d2-4a75-9d30-3ac302c59035"), "oldname", "olddesc", new LinkedList<>(List.of(TestConstants.product1)), BigDecimal.TEN, "USD");
 }

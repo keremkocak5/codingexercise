@@ -27,7 +27,7 @@ class ProductServiceTest {
     private ProductService productService;
 
     @Mock
-    ProductServiceGateway productServiceGateway;
+    private ProductServiceGateway productServiceGateway;
 
     @Test
     void getProductDetailsFromApiAndValidateShouldReturnProductMapAllProductsFound() {
