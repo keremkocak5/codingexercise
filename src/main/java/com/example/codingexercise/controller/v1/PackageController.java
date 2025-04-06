@@ -7,7 +7,6 @@ import com.example.codingexercise.service.IPackageService;
 import com.example.codingexercise.service.impl.PackageServiceFactory;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;

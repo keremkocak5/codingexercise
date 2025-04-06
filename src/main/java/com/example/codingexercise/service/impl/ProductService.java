@@ -10,7 +10,7 @@ import com.example.codingexercise.service.IProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -22,7 +22,7 @@ public class ProductService implements IProductService {
     private final ProductServiceGateway productServiceGateway;
 
     @Override
-    public List<Product> getProductDetailsFromApiAndValidate(List<String> productIds, CurrencyCode currencyCode) {
+    public LinkedList<Product> getProductDetailsFromApiAndValidate(LinkedList<String> productIds, CurrencyCode currencyCode) {
         Map<String, ProductApiResponse> productsById = productServiceGateway
                 .getAllProducts()
                 .stream()
@@ -33,6 +33,6 @@ public class ProductService implements IProductService {
                     throw new CodingExerciseRuntimeException(ErrorCode.PRODUCT_NOT_FOUND);
                 }))
                 .map(aProduct -> new Product(aProduct.id(), aProduct.name(), aProduct.usdPrice(), currencyCode.name()))
-                .collect(Collectors.toList());
+                .collect(Collectors.toCollection(LinkedList::new));
     }
 }

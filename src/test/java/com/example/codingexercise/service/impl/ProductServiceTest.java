@@ -11,6 +11,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -32,7 +33,7 @@ class ProductServiceTest {
     void getProductDetailsFromApiAndValidateShouldReturnProductMapAllProductsFound() {
         when(productServiceGateway.getAllProducts()).thenReturn(List.of(TestConstants.productApiResponse1, TestConstants.productApiResponse2));
 
-        List<Product> result = productService.getProductDetailsFromApiAndValidate(List.of("a1", "a2"), CurrencyCode.USD);
+        List<Product> result = productService.getProductDetailsFromApiAndValidate(new LinkedList<String>(List.of("a1", "a2")), CurrencyCode.USD);
 
         assertThat(result, hasSize(2));
         assertThat(result.get(0), is(TestConstants.product1));
@@ -43,7 +44,7 @@ class ProductServiceTest {
     void getProductDetailsFromApiAndValidateShouldThrowExceptionWhenProductNotFound() {
         when(productServiceGateway.getAllProducts()).thenReturn(List.of(TestConstants.productApiResponse1, TestConstants.productApiResponse2));
 
-        assertThrows(CodingExerciseRuntimeException.class, () -> productService.getProductDetailsFromApiAndValidate(List.of("a1", "a2", "a3"), CurrencyCode.USD));
+        assertThrows(CodingExerciseRuntimeException.class, () -> productService.getProductDetailsFromApiAndValidate(new LinkedList<>( List.of("a1", "a2", "a3")), CurrencyCode.USD));
     }
 
 }

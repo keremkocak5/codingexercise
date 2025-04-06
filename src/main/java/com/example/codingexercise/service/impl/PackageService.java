@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -71,25 +72,25 @@ public class PackageService implements IPackageConvertibleRateService, IPackageS
     }
 
     private Package getProductsAndSavePackage(PackageRequest packageRequest, CurrencyCode currencyCode) {
-        List<Product> products = productService.getProductDetailsFromApiAndValidate(packageRequest.productIds(), currencyCode);
+        LinkedList<Product> products = productService.getProductDetailsFromApiAndValidate(packageRequest.productIds(), currencyCode);
         BigDecimal totalPrice = getTotalPrice(products);
         Package newPackage = new Package(UUID.randomUUID(), packageRequest.name(), packageRequest.description(), products, totalPrice, currencyCode.name());
         return packageRepository.saveOrUpdate(newPackage);
     }
 
     private Package getProductsAndUpdatePackage(UUID id, PackageRequest packageRequest, CurrencyCode currencyCode) {
-        List<String> mergedProductIds = mergeExistingAndNewProductIdsIfPackageFound(id, packageRequest);
-        List<Product> products = productService.getProductDetailsFromApiAndValidate(mergedProductIds, currencyCode);
+        LinkedList<String> mergedProductIds = mergeExistingAndNewProductIdsIfPackageFound(id, packageRequest);
+        LinkedList<Product> products = productService.getProductDetailsFromApiAndValidate(mergedProductIds, currencyCode);
         BigDecimal totalPrice = getTotalPrice(products);
         Package existingPackage = new Package(id, packageRequest.name(), packageRequest.description(), products, totalPrice, currencyCode.name());
         return packageRepository.saveOrUpdate(existingPackage);
     }
 
-    private List<String> mergeExistingAndNewProductIdsIfPackageFound(UUID id, PackageRequest packageRequest) {
-        List<String> productIds = getPackageOrThrowIfNotFound(id).getProducts()
+    private LinkedList<String> mergeExistingAndNewProductIdsIfPackageFound(UUID id, PackageRequest packageRequest) {
+        LinkedList<String> productIds = getPackageOrThrowIfNotFound(id).getProducts()
                 .stream()
                 .map(Product::getId)
-                .collect(Collectors.toList());
+                .collect(Collectors.toCollection(LinkedList::new));
         productIds.addAll(packageRequest.productIds());
         return productIds;
     }

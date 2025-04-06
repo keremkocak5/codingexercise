@@ -27,7 +27,7 @@ public class ProductServiceGateway {
         try {
             String response = productRestTemplate.getForObject(productServiceUrl + "/api/v1/products", String.class);
             ObjectMapper objectMapper = new ObjectMapper();
-            return objectMapper.readValue(response, new TypeReference<List<ProductApiResponse>>() {
+            return objectMapper.readValue(response, new TypeReference<>() {
             });
         } catch (Exception e) {
             log.error("ProductServiceGateway.getProducts failed.", e);

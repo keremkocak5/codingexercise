@@ -3,10 +3,10 @@ package com.example.codingexercise.service;
 import com.example.codingexercise.enums.CurrencyCode;
 import com.example.codingexercise.model.Product;
 
-import java.util.List;
+import java.util.LinkedList;
 
 public interface IProductService {
 
-    List<Product> getProductDetailsFromApiAndValidate(List<String> productIds, CurrencyCode currencyCode);
+    LinkedList<Product> getProductDetailsFromApiAndValidate(LinkedList<String> productIds, CurrencyCode currencyCode);
 
 }

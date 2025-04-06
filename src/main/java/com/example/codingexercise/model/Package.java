@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.math.BigDecimal;
-import java.util.List;
+import java.util.LinkedList;
 import java.util.UUID;
 
 @Getter
@@ -14,7 +14,7 @@ public class Package {
     private final UUID id;
     private final String name;
     private final String description;
-    private final List<Product> products;
+    private final LinkedList<Product> products;
     private final BigDecimal totalPrice;
     private final String currencyCode;
 

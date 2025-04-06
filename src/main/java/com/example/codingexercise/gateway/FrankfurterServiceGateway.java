@@ -24,7 +24,12 @@ public class FrankfurterServiceGateway {
 
     public @NonNull FrankfurterApiRateResponse getCurrencyBaseUsd(@NonNull CurrencyCode currencyCode) {
         try {
-            return frankfurterRestTemplate.getForObject(frankfurterServiceUrl + "/v1/latest?base=" + Constant.USD + "&symbols={currencyCode}", FrankfurterApiRateResponse.class, currencyCode.name());
+            FrankfurterApiRateResponse frankfurterApiRateResponse = frankfurterRestTemplate.getForObject(frankfurterServiceUrl + "/v1/latest?base=" + Constant.USD + "&symbols={currencyCode}", FrankfurterApiRateResponse.class, currencyCode.name());
+            if (frankfurterApiRateResponse == null) {
+                log.error("FrankfurterServiceGateway.getCurrencyBaseUsd failed for currencyCode {}.", currencyCode);
+                throw new CodingExerciseRuntimeException(ErrorCode.RATE_CONNECTION_ERROR);
+            }
+            return frankfurterApiRateResponse;
         } catch (Exception e) {
             log.error("FrankfurterServiceGateway.getCurrencyBaseUsd failed for currencyCode {}.", currencyCode);
             log.error("FrankfurterServiceGateway.getCurrencyBaseUsd failed.", e);
