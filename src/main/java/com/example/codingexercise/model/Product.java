@@ -5,6 +5,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 @Getter
 @AllArgsConstructor
@@ -12,6 +13,7 @@ import java.math.BigDecimal;
 public class Product {
 
     private final String id;
+    private final UUID packageId;
     private final String name;
     private final BigDecimal price;
     private final String currencyCode;

@@ -1,11 +1,11 @@
 package com.example.codingexercise.service.impl;
 
-import com.example.codingexercise.enums.CurrencyCode;
-import com.example.codingexercise.enums.ErrorCode;
-import com.example.codingexercise.exception.CodingExerciseRuntimeException;
 import com.example.codingexercise.controller.v1.dto.incoming.PackageRequest;
 import com.example.codingexercise.controller.v1.dto.outgoing.PackageResponse;
 import com.example.codingexercise.controller.v1.dto.outgoing.ProductResponse;
+import com.example.codingexercise.enums.CurrencyCode;
+import com.example.codingexercise.enums.ErrorCode;
+import com.example.codingexercise.exception.CodingExerciseRuntimeException;
 import com.example.codingexercise.model.Package;
 import com.example.codingexercise.model.Product;
 import com.example.codingexercise.repository.PackageRepository;
@@ -72,15 +72,16 @@ public class PackageService implements IPackageConvertibleRateService, IPackageS
     }
 
     private Package getProductsAndSavePackage(PackageRequest packageRequest, CurrencyCode currencyCode) {
-        LinkedList<Product> products = productService.getProductDetailsFromApiAndValidate(packageRequest.productIds(), currencyCode);
+        UUID newPackageId = UUID.randomUUID();
+        LinkedList<Product> products = productService.getProductDetailsFromApiAndValidate(packageRequest.productIds(), currencyCode, newPackageId);
         BigDecimal totalPrice = getTotalPrice(products);
-        Package newPackage = new Package(UUID.randomUUID(), packageRequest.name(), packageRequest.description(), products, totalPrice, currencyCode.name());
+        Package newPackage = new Package(newPackageId, packageRequest.name(), packageRequest.description(), products, totalPrice, currencyCode.name());
         return packageRepository.saveOrUpdate(newPackage);
     }
 
     private Package getProductsAndUpdatePackage(UUID id, PackageRequest packageRequest, CurrencyCode currencyCode) {
         LinkedList<String> mergedProductIds = mergeExistingAndNewProductIdsIfPackageFound(id, packageRequest);
-        LinkedList<Product> products = productService.getProductDetailsFromApiAndValidate(mergedProductIds, currencyCode);
+        LinkedList<Product> products = productService.getProductDetailsFromApiAndValidate(mergedProductIds, currencyCode, id);
         BigDecimal totalPrice = getTotalPrice(products);
         Package existingPackage = new Package(id, packageRequest.name(), packageRequest.description(), products, totalPrice, currencyCode.name());
         return packageRepository.saveOrUpdate(existingPackage);

@@ -4,7 +4,6 @@ import com.example.codingexercise.constants.TestConstants;
 import com.example.codingexercise.controller.v1.dto.incoming.PackageRequest;
 import com.example.codingexercise.controller.v1.dto.outgoing.PackageResponse;
 import com.example.codingexercise.enums.CurrencyCode;
-import com.example.codingexercise.model.Package;
 import com.example.codingexercise.repository.PackageRepository;
 import com.example.codingexercise.service.IProductService;
 import org.junit.jupiter.api.Test;
@@ -24,6 +23,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -40,7 +40,7 @@ class PackageServiceTest {
     @Test
     void createPackageShouldReturnPackageResponseWhenProductsValid() {
         PackageRequest packageRequest = new PackageRequest("packname", "desc", new LinkedList(List.of("a1", "a2")));
-        when(productService.getProductDetailsFromApiAndValidate(new LinkedList(List.of("a1", "a2")), CurrencyCode.USD)).thenReturn(new LinkedList(List.of(TestConstants.product1, TestConstants.product2)));
+        when(productService.getProductDetailsFromApiAndValidate(any(), any(), any())).thenReturn(new LinkedList(List.of(TestConstants.product1, TestConstants.product2)));
 
         PackageResponse result = packageService.createPackage(packageRequest, CurrencyCode.USD);
 
@@ -64,7 +64,7 @@ class PackageServiceTest {
     @Test
     void updatePackageShouldReturnPackageResponseWhenPackagesValidAndPackageFound() {
         PackageRequest packageRequest = new PackageRequest("packname2", "desc2", new LinkedList(List.of("a1", "a2")));
-        when(productService.getProductDetailsFromApiAndValidate(new LinkedList(List.of("a1", "a1", "a2")), CurrencyCode.USD)).thenReturn(new LinkedList(List.of(TestConstants.product1, TestConstants.product2)));
+        when(productService.getProductDetailsFromApiAndValidate(new LinkedList(List.of("a1", "a1", "a2")), CurrencyCode.USD, UUID.fromString("4eef06bd-c5d2-4a75-9d30-3ac302c59035"))).thenReturn(new LinkedList(List.of(TestConstants.product1, TestConstants.product2)));
         when(packageRepository.findById(UUID.fromString("4eef06bd-c5d2-4a75-9d30-3ac302c59035"))).thenReturn(Optional.of(TestConstants.package1));
 
         PackageResponse result = packageService.updatePackage(UUID.fromString("4eef06bd-c5d2-4a75-9d30-3ac302c59035"), packageRequest, CurrencyCode.USD);

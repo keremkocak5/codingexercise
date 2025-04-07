@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -22,7 +23,7 @@ public class ProductService implements IProductService {
     private final ProductServiceGateway productServiceGateway;
 
     @Override
-    public LinkedList<Product> getProductDetailsFromApiAndValidate(LinkedList<String> productIds, CurrencyCode currencyCode) {
+    public LinkedList<Product> getProductDetailsFromApiAndValidate(LinkedList<String> productIds, CurrencyCode currencyCode, UUID packageId) {
         Map<String, ProductApiResponse> productsById = productServiceGateway
                 .getAllProducts()
                 .stream()
@@ -32,7 +33,7 @@ public class ProductService implements IProductService {
                 .map(id -> productsById.computeIfAbsent(id, s -> {
                     throw new CodingExerciseRuntimeException(ErrorCode.PRODUCT_NOT_FOUND);
                 }))
-                .map(aProduct -> new Product(aProduct.id(), aProduct.name(), aProduct.usdPrice(), currencyCode.name()))
+                .map(aProduct -> new Product(aProduct.id(), packageId, aProduct.name(), aProduct.usdPrice(), currencyCode.name()))
                 .collect(Collectors.toCollection(LinkedList::new));
     }
 }

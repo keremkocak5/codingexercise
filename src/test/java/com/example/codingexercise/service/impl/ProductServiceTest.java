@@ -13,6 +13,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.UUID;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
@@ -33,7 +34,7 @@ class ProductServiceTest {
     void getProductDetailsFromApiAndValidateShouldReturnProductMapAllProductsFound() {
         when(productServiceGateway.getAllProducts()).thenReturn(List.of(TestConstants.productApiResponse1, TestConstants.productApiResponse2));
 
-        List<Product> result = productService.getProductDetailsFromApiAndValidate(new LinkedList<String>(List.of("a1", "a2")), CurrencyCode.USD);
+        List<Product> result = productService.getProductDetailsFromApiAndValidate(new LinkedList<String>(List.of("a1", "a2")), CurrencyCode.USD, UUID.fromString("4eef06bd-c5d2-4a75-9d30-3ac302c59035"));
 
         assertThat(result, hasSize(2));
         assertThat(result.get(0), is(TestConstants.product1));
@@ -44,7 +45,7 @@ class ProductServiceTest {
     void getProductDetailsFromApiAndValidateShouldThrowExceptionWhenProductNotFound() {
         when(productServiceGateway.getAllProducts()).thenReturn(List.of(TestConstants.productApiResponse1, TestConstants.productApiResponse2));
 
-        assertThrows(CodingExerciseRuntimeException.class, () -> productService.getProductDetailsFromApiAndValidate(new LinkedList<>( List.of("a1", "a2", "a3")), CurrencyCode.USD));
+        assertThrows(CodingExerciseRuntimeException.class, () -> productService.getProductDetailsFromApiAndValidate(new LinkedList<>(List.of("a1", "a2", "a3")), CurrencyCode.USD, UUID.fromString("4eef06bd-c5d2-4a75-9d30-3ac302c59035")));
     }
 
 }
