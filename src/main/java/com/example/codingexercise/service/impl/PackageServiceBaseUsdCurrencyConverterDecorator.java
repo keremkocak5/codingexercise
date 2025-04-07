@@ -41,15 +41,15 @@ public class PackageServiceBaseUsdCurrencyConverterDecorator implements IPackage
 
     @Override
     public PackageResponse getPackage(UUID id, CurrencyCode currencyCode) {
-        BigDecimal rate = currencyService.getCurrencyBaseUsd(currencyCode);
         PackageResponse packageResponse = packageConvertibleRateService.getPackage(id, currencyCode);
+        BigDecimal rate = currencyService.getCurrencyBaseUsd(currencyCode);
         return recalculatePriceAndTotalPrice(rate, packageResponse);
     }
 
     @Override
     public List<PackageResponse> getPackage(CurrencyCode currencyCode) {
-        BigDecimal rate = currencyService.getCurrencyBaseUsd(currencyCode);
         List<PackageResponse> packageResponses = packageConvertibleRateService.getPackage(currencyCode);
+        BigDecimal rate = currencyService.getCurrencyBaseUsd(currencyCode);
         return packageResponses
                 .stream()
                 .map(packageResponse -> recalculatePriceAndTotalPrice(rate, packageResponse))
